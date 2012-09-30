@@ -8,11 +8,4 @@ describe S3DirectUpload do
     S3DirectUpload.config.should be_true
   end
 
-  it "engine must be defined"
-    pending
-  end
-
-  it "form helper must be defined"
-    pending
-  end
 end

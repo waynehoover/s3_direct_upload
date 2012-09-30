@@ -5,10 +5,10 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Wayne"]
   gem.email         = ["wayne@blissofbeing.com"]
   gem.description   = %q{Direct Upload to Amazon S3 With CORS}
-  gem.summary       = %q{Gives a form helper for Rails which allows direct uploads to s3}
+  gem.summary       = %q{Gives a form helper for Rails which allows direct uploads to s3. Based on RailsCast#383}
   gem.homepage      = ""
 
-  gem.files         = `git ls-files`.split($\)
+  gem.files         = Dir["{lib,app}/**/*"] + ["LICENSE", "README.md"]
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "s3_direct_upload"
@@ -16,5 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = S3DirectUpload::VERSION
 
   gem.add_dependency 'rails', '~> 3.2'
+  gem.add_dependency 'coffee-rails', '~> 3.2.1'
+  gem.add_dependency 'sass-rails', '~> 3.2.1'
   gem.add_dependency 'jquery-fileupload-rails', '~> 0.3.4'
 end
