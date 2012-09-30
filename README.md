@@ -109,12 +109,11 @@ Upload form is hardcoded with id '#fileupload'
 
 This is just a simple gem that only really provides some javascript and a form helper. 
 This gem could go all sorts of ways based on what people want and how people contribute. 
-
 Ideas:
-*More specs! 
-*More options to control expiration, max filesize, file types etc.
-*Create generators.
-*Model methods.
+* More specs! 
+* More options to control expiration, max filesize, file types etc.
+* Create generators.
+* Model methods.
 
 ## Credit
 
