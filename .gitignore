@@ -1,5 +1,5 @@
 .DS_Store
-spec/gallery-jquery/fileupload
+spec/gallery-jquery-fileupload
 *.gem
 *.rbc
 .bundle
