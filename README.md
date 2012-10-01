@@ -6,7 +6,6 @@ Multi file uploading supported by jquery-fileupload.
 Code extracted from Ryan Bates' [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
 
 ## Installation
-
 Add this line to your application's Gemfile:
 
     gem 's3_direct_upload'
@@ -50,8 +49,7 @@ Add the following js and css to your asset pipeline:
 ```
 
 ## Usage
-
-Create a new view that uses the helper:
+Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
 <%= s3_uploader_form post: model_url, as: "model[image_url]" do %>
   <%= file_field_tag :file, multiple: true %>
@@ -68,38 +66,40 @@ Also place this template in the same view for the progress bars:
 </script>
 ```
 
-### Customizations
-Feel free to override the styling for the progress bars in s3_direct_upload_progress_bars, look at the source for inspiration.
+## Options for form helper
+`post:` -> url in which is POST'd to after file is uploaded to S3. Example: model_url
+`as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be "model[image_url] : http://bucketname.s3.amazonws.com/filename.ext"
 
-Also feel free to write your own js to interface with jquery-file-upload. You might want to do this to do custom validations on the files before it is sent to S3 for example.
-To do this remove `s3_direct_upload` from your application.js and include the necissary jquery-file-upload scripts (they are included in this gem automatically):
-```javascript
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
-```
-and use the `s3_direct_upload` script as a guide, the form helper will still work fine if thats all you need.
 
-### s3_uploader_form options and after upload callback
-After the upload is complete, the script will execute an ajax POST to the model_url given in the `post` option in the form helper. 
-The url to the file on S3 will be passed as a key to whatever is in the `as` option.
+## Persisting the S3 url
+It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given as the `as` option). So to access your files later.
 
-You could have your create action render a javascript file like this:
+One way to do this is to make sure you have `resources model` in your routes file, and add the `image_url` (or whatever you would like to name it) attribute to your model, and then make sure you have the create action in your controller for that model.
 
+You could then have your create action render a javascript file like this:
 **create.js.erb**
 ```ruby
 <% if @model.new_record? %>
   alert("Failed to upload model: <%= j @model.errors.full_messages.join(', ').html_safe %>");
 <% else %>
-  $("#paintings").append("<%= j render(@model) %>");
+  $("#container").append("<%= j render(@model) %>");
 <% end %>
 ```
-So that javascript code would be executed after the model instance is created, without a page refresh.
+So that javascript code would be executed after the model instance is created, without a page refresh. See [@rbates's gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload)) for an example of that method.
 
-It is recommended that you persist the `image_url` as an attribute on the model. To do this add `resources model` to your routes file, and add the `image_url` attribute to your model (can be whatever you like, but must match what you use in the the `as` option of the form helper.)
+### Advanced Customizations
+Feel free to override the styling for the progress bars in s3_direct_upload_progress_bars.css, look at the source for inspiration.
+
+Also feel free to write your own js to interface with jquery-file-upload. You might want to do this to do custom validations on the files before it is sent to S3 for example.
+To do this remove `s3_direct_upload` from your application.js and include the necissary jquery-file-upload scripts in your asset pipeline (they are included in this gem automatically):
+```javascript
+//= require jquery-fileupload/basic
+//= require jquery-fileupload/vendor/tmpl
+```
+Use the javascript in `s3_direct_upload` as a guide.
 
 
 ## Gotchas
-
 Right now you can only have one upload form on a page.
 
 Upload form is hardcoded with id '#fileupload'
@@ -111,9 +111,11 @@ This is just a simple gem that only really provides some javascript and a form h
 This gem could go all sorts of ways based on what people want and how people contribute. 
 Ideas:
 * More specs! 
-* More options to control expiration, max filesize, file types etc.
+* More options to control files expiration, max filesize, file types etc.
+* More convention over configuration on rails side
 * Create generators.
 * Model methods.
+
 
 ## Credit
 
