@@ -68,10 +68,11 @@ Also place this template in the same view for the progress bars:
 
 ## Options for form helper
 `post:` -> url in which is POST'd to after file is uploaded to S3. Example: model_url
-`as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be "model[image_url] : http://bucketname.s3.amazonws.com/filename.ext"
+
+`as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
 
 
-## Persisting the S3 url
+### Persisting the S3 url
 It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given as the `as` option). So to access your files later.
 
 One way to do this is to make sure you have `resources model` in your routes file, and add the `image_url` (or whatever you would like to name it) attribute to your model, and then make sure you have the create action in your controller for that model.
