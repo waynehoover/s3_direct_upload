@@ -66,4 +66,3 @@
 
 jQuery ->
   S3Uploader.init()
-
