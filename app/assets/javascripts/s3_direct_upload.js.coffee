@@ -51,7 +51,6 @@
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array 
         if current_files.length == 0
           $(document).trigger("s3_uploads_complete")
-          console.log "uploads completed"
 
       fail: (e, data) ->
         alert("#{data.files[0].name} failed to upload.")
