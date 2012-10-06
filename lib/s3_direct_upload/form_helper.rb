@@ -19,7 +19,8 @@ module S3DirectUpload
           acl: "public-read",
           expiration: 10.hours.from_now,
           max_file_size: 500.megabytes,
-          as: "file"
+          as: "file",
+          key: key
         )
       end
 
@@ -38,7 +39,7 @@ module S3DirectUpload
 
       def fields
         {
-          :key => key,
+          :key => @options[:key] || key,
           :acl => @options[:acl],
           :policy => policy,
           :signature => signature,
