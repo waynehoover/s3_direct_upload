@@ -11,14 +11,15 @@
   init: ->
 
     self = this
+    $uploadForm = $('form[data-s3-direct-upload="true"]')
 
-    $('#fileupload').fileupload
+    $uploadForm.fileupload
 
       add: (e, data) ->
         file = data.files[0]
         unless self.before_add and not self.before_add(file)
           data.context = $(tmpl("template-upload", file))
-          $('#fileupload').append(data.context)
+          $uploadForm.append(data.context)
           data.submit()
 
       progress: (e, data) ->
@@ -28,11 +29,11 @@
 
       done: (e, data) ->
         file = data.files[0]
-        domain = $('#fileupload').attr('action')
-        path = self.path + $('#fileupload input[name=key]').val().replace('/${filename}', '')
-        to = $('#fileupload').data('post')
+        domain = $uploadForm.attr('action')
+        path = self.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+        to = $uploadForm.data('post')
         content = {}
-        content[$('#fileupload').data('as')] = domain + path + '/' + file.name
+        content[$uploadForm.data('as')] = domain + path + '/' + file.name
         content.name = file.name
         content.path = path
         if self.extra_data

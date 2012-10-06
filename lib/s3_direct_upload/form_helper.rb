@@ -12,7 +12,6 @@ module S3DirectUpload
     class S3Uploader
       def initialize(options)
         @options = options.reverse_merge(
-          id: "fileupload",
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: S3DirectUpload.config.bucket,
@@ -31,6 +30,7 @@ module S3DirectUpload
           authenticity_token: false,
           multipart: true,
           data: {
+            "s3-direct-upload" => true, 
             post: @options[:post],
             as: @options[:as]
           }
