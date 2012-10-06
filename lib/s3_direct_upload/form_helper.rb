@@ -19,7 +19,8 @@ module S3DirectUpload
           acl: "public-read",
           expiration: 10.hours.from_now,
           max_file_size: 500.megabytes,
-          as: "file"
+          as: "file",
+          key: key
         )
       end
 
@@ -38,7 +39,7 @@ module S3DirectUpload
 
       def fields
         {
-          :key => key,
+          :key => @options[:key] || key,
           :acl => @options[:acl],
           :policy => policy,
           :signature => signature,
@@ -65,6 +66,7 @@ module S3DirectUpload
             ["starts-with", "$utf8", ""],
             ["starts-with", "$key", ""],
             ["content-length-range", 0, @options[:max_file_size]],
+            ["starts-with","$Content-Type",""],
             {bucket: @options[:bucket]},
             {acl: @options[:acl]}
           ]
