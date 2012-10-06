@@ -38,9 +38,9 @@ In production the AllowedOrigin key should be your domain.
 
 Add the following js and css to your asset pipeline:
 
-**application.js**
+**application.js.coffee**
 ```ruby
-//= require s3_direct_upload
+#= require s3_direct_upload
 ```
 
 **application.css**
@@ -51,9 +51,15 @@ Add the following js and css to your asset pipeline:
 ## Usage
 Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
-<%= s3_uploader_form post: model_url, as: "model[image_url]" do %>
+<%= s3_uploader_form post: model_url, as: "model[image_url]", id: "myS3Uploader" do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
+```
+
+Then in your application.js.cofee, call the S3Uploader jQuery plugin on the element you created above:
+```cofeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader()
 ```
 
 Also place this template in the same view for the progress bars:
@@ -77,7 +83,7 @@ Also place this template in the same view for the progress bars:
 
 `max_file_size:` -> maximum file size, defaults to 500.megabytes
 
-`id:` -> optional html id for the form.
+`id:` -> html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
 
 'class:' -> optional html class for the form.
 
@@ -110,20 +116,30 @@ To do this remove `s3_direct_upload` from your application.js and include the ne
 Use the javascript in `s3_direct_upload` as a guide.
 
 
-There are now also a few javascript options for customization directly built into s3_direct_upload:
+### Javscript options
+
+There are a few javascript options for customization for the S3Uploader jQuery plugin:
 
 #### S3 Path
 
 You can dynamically set the s3 file path:
 
-`S3Uploader.path = 'path/to/my/files/on/s3'`
+`path : 'path/to/my/files/on/s3'`
 
-The file path in your s3 bucket will effectively be `S3Uploader.path + key`.
+The file path in your s3 bucket will effectively be `path + key`.
 
 #### Before Add File callback
 
-If you like to validate the filenames of files to be uploaded, you can hook into the uploader by setting the `S3Uploader.before_add` callback.
+If you like to validate the filenames of files to be uploaded, you can hook into the uploader by setting the `before_add` callback.
 In your callback you can then either return true (upload file) or false (cancel upload).
+
+Here is an example using these options:
+```cofeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader
+    path: 'path/to/my/files/on/s3'
+    before_add: myCallBackFunction()
+```
 
 #### Extra Data
 

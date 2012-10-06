@@ -31,7 +31,6 @@ module S3DirectUpload
           authenticity_token: false,
           multipart: true,
           data: {
-            "s3-direct-upload" => true, 
             post: @options[:post],
             as: @options[:as]
           }
