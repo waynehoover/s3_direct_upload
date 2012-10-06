@@ -28,3 +28,15 @@ jQuery ->
       alert("#{data.files[0].name} failed to upload.")
       console.log("Upload failed:")
       console.log(data)
+
+    formData: (form) ->
+      data = form.serializeArray()
+      fileType = ""
+      if "type" of @files[0]
+        fileType = @files[0].type
+      data.push
+        name: "Content-Type"
+        value: fileType
+
+      data
+

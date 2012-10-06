@@ -65,6 +65,7 @@ module S3DirectUpload
             ["starts-with", "$utf8", ""],
             ["starts-with", "$key", ""],
             ["content-length-range", 0, @options[:max_file_size]],
+            ["starts-with","$Content-Type",""],
             {bucket: @options[:bucket]},
             {acl: @options[:acl]}
           ]
