@@ -73,7 +73,7 @@ Also place this template in the same view for the progress bars:
 
 
 ### Persisting the S3 url
-It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given as the `as` option). So to access your files later.
+It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given in the `as` option). So to access your files later.
 
 One way to do this is to make sure you have `resources model` in your routes file, and add the `image_url` (or whatever you would like to name it) attribute to your model, and then make sure you have the create action in your controller for that model.
 
@@ -116,6 +116,7 @@ Ideas:
 * More convention over configuration on rails side
 * Create generators.
 * Model methods.
+* Model method to delete files from s3
 
 
 ## Credit
