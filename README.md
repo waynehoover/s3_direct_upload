@@ -39,12 +39,12 @@ In production the AllowedOrigin key should be your domain.
 Add the following js and css to your asset pipeline:
 
 **application.js.coffee**
-```ruby
+```coffeescript
 #= require s3_direct_upload
 ```
 
 **application.css**
-```ruby
+```css
 //= require s3_direct_upload_progress_bars
 ```
 
@@ -56,14 +56,14 @@ Create a new view that uses the form helper `s3_uploader_form`:
 <% end %>
 ```
 
-Then in your application.js.cofee, call the S3Uploader jQuery plugin on the element you created above:
-```cofeescript
+Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
+```coffeescript
 jQuery ->
   $("#myS3Uploader").S3Uploader()
 ```
 
 Also place this template in the same view for the progress bars:
-```javascript
+```js+erb
 <script id="template-upload" type="text/x-tmpl">
 <div class="upload">
   {%=o.name%}
@@ -109,43 +109,28 @@ Feel free to override the styling for the progress bars in s3_direct_upload_prog
 
 Also feel free to write your own js to interface with jquery-file-upload. You might want to do this to do custom validations on the files before it is sent to S3 for example.
 To do this remove `s3_direct_upload` from your application.js and include the necessary jquery-file-upload scripts in your asset pipeline (they are included in this gem automatically):
-```javascript
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
+```cofeescript
+#= require jquery-fileupload/basic
+#= require jquery-fileupload/vendor/tmpl
 ```
 Use the javascript in `s3_direct_upload` as a guide.
 
 
-### Javscript options
+## Options for S3Upload jQuery Plugin
 
-There are a few javascript options for customization for the S3Uploader jQuery plugin:
+`path` -> manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`
 
-#### S3 Path
+Note: the file path in your s3 bucket will effectively be `path + key`.
 
-You can dynamically set the s3 file path:
+`extra_data` -> You can send additional data to your rails app in the persistence post request. Example: `{key: value}` 
 
-`path : 'path/to/my/files/on/s3'`
+This would be accessable in your params hash as  `params[:extra_data][:key]`
 
-The file path in your s3 bucket will effectively be `path + key`.
+`before_add` -> Callback function that executes before a file is added to the que. It is passed file object and expects `true` or `false` to be returned.
 
-#### Before Add File callback
+This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
-If you like to validate the filenames of files to be uploaded, you can hook into the uploader by setting the `before_add` callback.
-In your callback you can then either return true (upload file) or false (cancel upload).
-
-Here is an example using these options:
-```cofeescript
-jQuery ->
-  $("#myS3Uploader").S3Uploader
-    path: 'path/to/my/files/on/s3'
-    before_add: myCallBackFunction()
-```
-
-#### Extra Data
-
-You can send additional data to your rails app in the persistence post request by setting `S3Uploader.extra_data` 
-
-#### Event Hooks
+### Global Event Hooks
 
 When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
 ```javascript
@@ -154,6 +139,14 @@ $(document).bind('s3_uploads_complete', function(){
     alert("All Uploads completed")
 }); 
 ````
+### Example with all options.
+```cofeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader
+    path: 'path/to/my/files/on/s3'
+    extra_data: {key: 'value'}
+    before_add: myCallBackFunction() # must return true or false if set
+```
 
 
 ## Contributing / TODO
