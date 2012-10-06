@@ -71,6 +71,12 @@ Also place this template in the same view for the progress bars:
 
 `as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
 
+`key:` -> key on s3. defaults to `"uploads/#{SecureRandom.hex}/${filename}"`. needs to be at least `"${filename}"`.
+
+`acl:` -> acl for files uploaded to s3, defaults to "public-read"
+
+`max_file_size:` -> maximum file size, defaults to 500.megabytes
+
 
 ### Persisting the S3 url
 It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given as the `as` option). So to access your files later.
@@ -92,12 +98,32 @@ So that javascript code would be executed after the model instance is created, w
 Feel free to override the styling for the progress bars in s3_direct_upload_progress_bars.css, look at the source for inspiration.
 
 Also feel free to write your own js to interface with jquery-file-upload. You might want to do this to do custom validations on the files before it is sent to S3 for example.
-To do this remove `s3_direct_upload` from your application.js and include the necissary jquery-file-upload scripts in your asset pipeline (they are included in this gem automatically):
+To do this remove `s3_direct_upload` from your application.js and include the necessary jquery-file-upload scripts in your asset pipeline (they are included in this gem automatically):
 ```javascript
 //= require jquery-fileupload/basic
 //= require jquery-fileupload/vendor/tmpl
 ```
 Use the javascript in `s3_direct_upload` as a guide.
+
+
+There are now also a few javascript options for customization directly built into s3_direct_upload:
+
+#### S3 Path
+
+You can dynamically set the s3 file path:
+
+`S3Uploader.path = 'path/to/my/files/on/s3'`
+
+The file path in your s3 bucket will effectively be `S3Uploader.path + key`.
+
+#### Before Add File callback
+
+If you like to validate the filenames of files to be uploaded, you can hook into the uploader by setting the `S3Uploader.before_add` callback.
+In your callback you can then either return true (upload file) or false (cancel upload).
+
+#### Extra Data
+
+You can send additional data to your rails app in the persistance post request by setting `S3Uploader.extra_data` 
 
 
 ## Gotchas
