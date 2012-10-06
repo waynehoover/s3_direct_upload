@@ -123,7 +123,7 @@ In your callback you can then either return true (upload file) or false (cancel 
 
 #### Extra Data
 
-You can send additional data to your rails app in the persistence post request by setting `S3Uploader.extra_data` 
+You can send additional data to your rails app in the persistence POST request by setting `S3Uploader.extra_data` 
 
 
 ## Gotchas
