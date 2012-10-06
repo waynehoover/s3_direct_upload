@@ -77,6 +77,10 @@ Also place this template in the same view for the progress bars:
 
 `max_file_size:` -> maximum file size, defaults to 500.megabytes
 
+`id:` -> optional html id for the form.
+
+'class:' -> optional html class for the form.
+
 
 ### Persisting the S3 url
 It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given in the `as` option). So to access your files later.
@@ -126,19 +130,13 @@ In your callback you can then either return true (upload file) or false (cancel 
 You can send additional data to your rails app in the persistence post request by setting `S3Uploader.extra_data` 
 
 
-## Gotchas
-Right now you can only have one upload form on a page.
-
-Upload form is hardcoded with id '#fileupload'
-
-
 ## Contributing / TODO
 
 This is just a simple gem that only really provides some javascript and a form helper. 
 This gem could go all sorts of ways based on what people want and how people contribute. 
 Ideas:
 * More specs! 
-* More options to control files expiration, max filesize, file types etc.
+* More options to control file types, ability to batch upload.
 * More convention over configuration on rails side
 * Create generators.
 * Model methods.

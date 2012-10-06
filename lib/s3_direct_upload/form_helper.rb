@@ -26,6 +26,7 @@ module S3DirectUpload
       def form_options
         {
           id: @options[:id],
+          class: @options[:class],
           method: "post",
           authenticity_token: false,
           multipart: true,
