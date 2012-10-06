@@ -129,6 +129,16 @@ In your callback you can then either return true (upload file) or false (cancel 
 
 You can send additional data to your rails app in the persistence post request by setting `S3Uploader.extra_data` 
 
+#### Event Hooks
+
+When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
+```javascript
+$(document).bind('s3_uploads_complete', function(){
+    ...
+    alert("All Uploads completed")
+}); 
+````
+
 
 ## Contributing / TODO
 

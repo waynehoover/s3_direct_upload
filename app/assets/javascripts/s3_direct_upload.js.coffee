@@ -12,10 +12,12 @@
 
     self = this
     $uploadForm = $('form[data-s3-direct-upload="true"]')
+    current_files = []
 
     $uploadForm.fileupload
 
       add: (e, data) ->
+        current_files.push data
         file = data.files[0]
         unless self.before_add and not self.before_add(file)
           data.context = $(tmpl("template-upload", file))
@@ -45,6 +47,11 @@
 
         $.post(to, content)
         data.context.remove() if data.context # remove progress bar
+
+        current_files.splice($.inArray(data, current_files), 1) # remove that element from the array 
+        if current_files.length == 0
+          $(document).trigger("s3_uploads_complete")
+          console.log "uploads completed"
 
       fail: (e, data) ->
         alert("#{data.files[0].name} failed to upload.")
