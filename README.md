@@ -94,6 +94,8 @@ You could then have your create action render a javascript file like this:
 ```
 So that javascript code would be executed after the model instance is created, without a page refresh. See [@rbates's gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload)) for an example of that method.
 
+Note: the POST request to the rails app also includes the following parameters `filesize`, `filetype`, `filename` and `filepath`.
+
 ### Advanced Customizations
 Feel free to override the styling for the progress bars in s3_direct_upload_progress_bars.css, look at the source for inspiration.
 
@@ -123,8 +125,7 @@ In your callback you can then either return true (upload file) or false (cancel 
 
 #### Extra Data
 
-You can send additional data to your rails app in the persistence post request by setting `S3Uploader.extra_data` 
-
+You can send additional data to your rails app in the persistence POST request by setting `S3Uploader.extra_data`.
 
 ## Gotchas
 Right now you can only have one upload form on a page.
