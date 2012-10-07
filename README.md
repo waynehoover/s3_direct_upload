@@ -130,6 +130,16 @@ This would be accessable in your params hash as  `params[:extra_data][:key]`
 
 This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
+### Public methods
+You can change the settings on your form later on by accessing the jQuery instance:
+
+```cofeescript
+jQuery ->
+  v = $("#myS3Uploader").S3Uploader()
+  ...
+  v.path = "new/path/"
+  v.exta_data = "newdata"
+
 ### Global Event Hooks
 
 When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
@@ -147,6 +157,7 @@ jQuery ->
     extra_data: {key: 'value'}
     before_add: myCallBackFunction() # must return true or false if set
 ```
+
 
 
 ## Contributing / TODO
