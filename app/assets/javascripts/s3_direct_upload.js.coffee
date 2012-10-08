@@ -45,14 +45,14 @@
           to = $uploadForm.data('post')
           content = {}
           content[$uploadForm.data('as')] = domain + path + '/' + file.name
-          content.name = file.name
-          content.path = path
+          content.filename = file.name
+          content.filepath = path
           if settings.extra_data
             content.extra_data = settings.extra_data
           if 'size' of file
-            content.file_size = file.size
+            content.filesize = file.size
           if 'type' of file
-            content.file_type = file.type
+            content.filetype = file.type
 
           $.post(to, content)
           data.context.remove() if data.context # remove progress bar
