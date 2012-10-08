@@ -38,26 +38,32 @@ In production the AllowedOrigin key should be your domain.
 
 Add the following js and css to your asset pipeline:
 
-**application.js**
-```ruby
-//= require s3_direct_upload
+**application.js.coffee**
+```coffeescript
+#= require s3_direct_upload
 ```
 
 **application.css**
-```ruby
+```css
 //= require s3_direct_upload_progress_bars
 ```
 
 ## Usage
 Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
-<%= s3_uploader_form post: model_url, as: "model[image_url]" do %>
+<%= s3_uploader_form post: model_url, as: "model[image_url]", id: "myS3Uploader" do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
 ```
 
+Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
+```coffeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader()
+```
+
 Also place this template in the same view for the progress bars:
-```javascript
+```js+erb
 <script id="template-upload" type="text/x-tmpl">
 <div class="upload">
   {%=o.name%}
@@ -77,9 +83,13 @@ Also place this template in the same view for the progress bars:
 
 `max_file_size:` -> maximum file size, defaults to 500.megabytes
 
+`id:` -> html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
+
+`class:` -> optional html class for the form.
+
 
 ### Persisting the S3 url
-It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given as the `as` option). So to access your files later.
+It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given in the `as` option). So to access your files later.
 
 One way to do this is to make sure you have `resources model` in your routes file, and add the `image_url` (or whatever you would like to name it) attribute to your model, and then make sure you have the create action in your controller for that model.
 
@@ -101,36 +111,55 @@ Feel free to override the styling for the progress bars in s3_direct_upload_prog
 
 Also feel free to write your own js to interface with jquery-file-upload. You might want to do this to do custom validations on the files before it is sent to S3 for example.
 To do this remove `s3_direct_upload` from your application.js and include the necessary jquery-file-upload scripts in your asset pipeline (they are included in this gem automatically):
-```javascript
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
+```cofeescript
+#= require jquery-fileupload/basic
+#= require jquery-fileupload/vendor/tmpl
 ```
 Use the javascript in `s3_direct_upload` as a guide.
 
 
-There are now also a few javascript options for customization directly built into s3_direct_upload:
+## Options for S3Upload jQuery Plugin
 
-#### S3 Path
+`path` -> manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`
 
-You can dynamically set the s3 file path:
+Note: the file path in your s3 bucket will effectively be `path + key`.
 
-`S3Uploader.path = 'path/to/my/files/on/s3'`
+`extra_data` -> You can send additional data to your rails app in the persistence POST request. Example: `{key: value}`
 
-The file path in your s3 bucket will effectively be `S3Uploader.path + key`.
+This would be accessible in your params hash as  `params[:extra_data][:key]`
 
-#### Before Add File callback
+`before_add` -> Callback function that executes before a file is added to the que. It is passed file object and expects `true` or `false` to be returned.
 
-If you like to validate the filenames of files to be uploaded, you can hook into the uploader by setting the `S3Uploader.before_add` callback.
-In your callback you can then either return true (upload file) or false (cancel upload).
+This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
-#### Extra Data
+### Public methods
+You can change the settings on your form later on by accessing the jQuery instance:
 
-You can send additional data to your rails app in the persistence POST request by setting `S3Uploader.extra_data`.
+```cofeescript
+jQuery ->
+  v = $("#myS3Uploader").S3Uploader()
+  ...
+  v.path = "new/path/"
+  v.exta_data = "newdata"
 
-## Gotchas
-Right now you can only have one upload form on a page.
+### Global Event Hooks
 
-Upload form is hardcoded with id '#fileupload'
+When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
+```javascript
+$(document).bind('s3_uploads_complete', function(){
+    ...
+    alert("All Uploads completed")
+}); 
+````
+### Example with all options.
+```cofeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader
+    path: 'path/to/my/files/on/s3'
+    extra_data: {key: 'value'}
+    before_add: myCallBackFunction() # must return true or false if set
+```
+
 
 
 ## Contributing / TODO
@@ -139,10 +168,11 @@ This is just a simple gem that only really provides some javascript and a form h
 This gem could go all sorts of ways based on what people want and how people contribute. 
 Ideas:
 * More specs! 
-* More options to control files expiration, max filesize, file types etc.
+* More options to control file types, ability to batch upload.
 * More convention over configuration on rails side
 * Create generators.
 * Model methods.
+* Model method to delete files from s3
 
 
 ## Credit

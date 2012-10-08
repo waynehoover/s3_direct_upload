@@ -1,69 +1,94 @@
 #= require jquery-fileupload/basic
 #= require jquery-fileupload/vendor/tmpl
 
+(($) ->
+  $.fn.S3Uploader = (options) ->
 
-@S3Uploader =
+    # support multiple elements
+    if @length > 1
+      @each ->
+        $(this).S3Upleader options
 
-  path: ''
-  extra_data: null
-  before_add: null
+      return this
 
-  init: ->
+    $uploadForm = this
 
-    self = this
+    settings =
+      path: ''
+      extra_data: null
+      before_add: null
 
-    $('#fileupload').fileupload
+    settings = $.extend settings, options
 
-      add: (e, data) ->
-        file = data.files[0]
-        unless self.before_add and not self.before_add(file)
-          data.context = $(tmpl("template-upload", file))
-          $('#fileupload').append(data.context)
-          data.submit()
+    current_files = []
 
-      progress: (e, data) ->
-        if data.context
-          progress = parseInt(data.loaded / data.total * 100, 10)
-          data.context.find('.bar').css('width', progress + '%')
+    setUploadForm = ->
+      $uploadForm.fileupload
 
-      done: (e, data) ->
-        file = data.files[0]
-        domain = $('#fileupload').attr('action')
-        path = self.path + $('#fileupload input[name=key]').val().replace('/${filename}', '')
-        to = $('#fileupload').data('post')
-        content = {}
-        content[$('#fileupload').data('as')] = domain + path + '/' + file.name
-        content.filename = file.name
-        content.filepath = path
-        if self.extra_data
-          content.extra_data = self.extra_data
-        if 'size' of file
-          content.filesize = file.size
-        if 'type' of file
-          content.filetype = file.type
+        add: (e, data) ->
+          current_files.push data
+          file = data.files[0]
+          unless settings.before_add and not settings.before_add(file)
+            data.context = $(tmpl("template-upload", file))
+            $uploadForm.append(data.context)
+            data.submit()
 
-        $.post(to, content)
-        data.context.remove() if data.context # remove progress bar
+        progress: (e, data) ->
+          if data.context
+            progress = parseInt(data.loaded / data.total * 100, 10)
+            data.context.find('.bar').css('width', progress + '%')
 
-      fail: (e, data) ->
-        alert("#{data.files[0].name} failed to upload.")
-        console.log("Upload failed:")
-        console.log(data)
+        done: (e, data) ->
+          file = data.files[0]
+          domain = $uploadForm.attr('action')
+          path = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+          to = $uploadForm.data('post')
+          content = {}
+          content[$uploadForm.data('as')] = domain + path + '/' + file.name
+          content.filename = file.name
+          content.filepath = path
+          if settings.extra_data
+            content.extra_data = settings.extra_data
+          if 'size' of file
+            content.filesize = file.size
+          if 'type' of file
+            content.filetype = file.type
 
-      formData: (form) ->
-        data = form.serializeArray()
-        fileType = ""
-        if "type" of @files[0]
-          fileType = @files[0].type
-        data.push
-          name: "Content-Type"
-          value: fileType
+          $.post(to, content)
+          data.context.remove() if data.context # remove progress bar
 
-        data[1].value = self.path + data[1].value
+          current_files.splice($.inArray(data, current_files), 1) # remove that element from the array 
+          if current_files.length == 0
+            $(document).trigger("s3_uploads_complete")
 
-        data
+        fail: (e, data) ->
+          alert("#{data.files[0].name} failed to upload.")
+          console.log("Upload failed:")
+          console.log(data)
 
+        formData: (form) ->
+          data = form.serializeArray()
+          fileType = ""
+          if "type" of @files[0]
+            fileType = @files[0].type
+          data.push
+            name: "Content-Type"
+            value: fileType
 
-jQuery ->
-  S3Uploader.init()
+          data[1].value = settings.path + data[1].value
 
+          data
+
+    #public methods
+    @initialize = ->
+      setUploadForm()
+      this
+
+    @path = (new_path) -> 
+      settings.path = new_path
+
+    @extra_data = (new_data) ->
+      settings.extra_data = extra_data
+
+    @initialize()
+) jQuery
