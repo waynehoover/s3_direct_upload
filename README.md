@@ -140,7 +140,7 @@ jQuery ->
   v = $("#myS3Uploader").S3Uploader()
   ...
   v.path("new/path/") 
-  v.exta_data("newdata")
+  v.additional_data("newdata")
 
 ### Global Event Hooks
 

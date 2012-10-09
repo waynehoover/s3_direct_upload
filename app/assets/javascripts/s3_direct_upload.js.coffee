@@ -7,7 +7,7 @@
     # support multiple elements
     if @length > 1
       @each ->
-        $(this).S3Upleader options
+        $(this).S3Uploader options
 
       return this
 
