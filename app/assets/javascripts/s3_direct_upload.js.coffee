@@ -15,7 +15,7 @@
 
     settings =
       path: ''
-      extra_data: null
+      additional_data: null
       before_add: null
 
     settings = $.extend settings, options
@@ -47,8 +47,8 @@
           content[$uploadForm.data('as')] = domain + path + '/' + file.name
           content.name = file.name
           content.path = path
-          if settings.extra_data
-            content.extra_data = settings.extra_data
+          if settings.additional_data
+            content = $.extend content, settings.additional_data
           if 'size' of file
             content.file_size = file.size
           if 'type' of file
@@ -87,8 +87,8 @@
     @path = (new_path) -> 
       settings.path = new_path
 
-    @extra_data = (new_data) ->
-      settings.extra_data = extra_data
+    @additional_data = (new_data) ->
+      settings.additional_data = additional_data
 
     @initialize()
 ) jQuery

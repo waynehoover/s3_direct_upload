@@ -122,9 +122,9 @@ Use the javascript in `s3_direct_upload` as a guide.
 
 Note: the file path in your s3 bucket will effectively be `path + key`.
 
-`extra_data` -> You can send additional data to your rails app in the persistence post request. Example: `{key: value}` 
+`additional_data` -> You can send additional data to your rails app in the persistence post request. Example: `{key: value}` 
 
-This would be accessable in your params hash as  `params[:extra_data][:key]`
+This would be accessable in your params hash as  `params[:key][:value]`
 
 `before_add` -> Callback function that executes before a file is added to the que. It is passed file object and expects `true` or `false` to be returned.
 
@@ -137,8 +137,8 @@ You can change the settings on your form later on by accessing the jQuery instan
 jQuery ->
   v = $("#myS3Uploader").S3Uploader()
   ...
-  v.path = "new/path/"
-  v.exta_data = "newdata"
+  v.path("new/path/") 
+  v.exta_data("newdata")
 
 ### Global Event Hooks
 
@@ -154,7 +154,7 @@ $(document).bind('s3_uploads_complete', function(){
 jQuery ->
   $("#myS3Uploader").S3Uploader
     path: 'path/to/my/files/on/s3'
-    extra_data: {key: 'value'}
+    additional_data: {key: 'value'}
     before_add: myCallBackFunction() # must return true or false if set
 ```
 
