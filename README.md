@@ -85,7 +85,7 @@ Also place this template in the same view for the progress bars:
 
 `id:` -> html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
 
-'class:' -> optional html class for the form.
+`class:` -> optional html class for the form.
 
 
 ### Persisting the S3 url
@@ -103,6 +103,8 @@ You could then have your create action render a javascript file like this:
 <% end %>
 ```
 So that javascript code would be executed after the model instance is created, without a page refresh. See [@rbates's gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload)) for an example of that method.
+
+Note: the POST request to the rails app also includes the following parameters `filesize`, `filetype`, `filename` and `filepath`.
 
 ### Advanced Customizations
 Feel free to override the styling for the progress bars in s3_direct_upload_progress_bars.css, look at the source for inspiration.
@@ -122,7 +124,7 @@ Use the javascript in `s3_direct_upload` as a guide.
 
 Note: the file path in your s3 bucket will effectively be `path + key`.
 
-`additional_data` -> You can send additional data to your rails app in the persistence post request. Example: `{key: value}` 
+`additional_data` -> You can send additional data to your rails app in the persistence POST request. Example: `{key: value}` 
 
 This would be accessable in your params hash as  `params[:key][:value]`
 

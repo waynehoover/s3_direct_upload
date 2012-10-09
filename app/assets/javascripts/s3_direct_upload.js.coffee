@@ -45,8 +45,8 @@
           to = $uploadForm.data('post')
           content = {}
           content[$uploadForm.data('as')] = domain + path + '/' + file.name
-          content.name = file.name
-          content.path = path
+          content.filename = file.name
+          content.filepath = path
           if settings.additional_data
             content = $.extend content, settings.additional_data
           if 'size' of file
