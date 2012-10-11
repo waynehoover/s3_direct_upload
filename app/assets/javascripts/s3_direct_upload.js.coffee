@@ -89,6 +89,6 @@ $.fn.S3Uploader = (options) ->
     settings.path = new_path
 
   @extra_data = (new_data) ->
-    settings.extra_data = extra_data
+    settings.extra_data = new_data
 
   @initialize()
