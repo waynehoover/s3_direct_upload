@@ -51,9 +51,9 @@ $.fn.S3Uploader = (options) ->
         if settings.additional_data
           content = $.extend content, settings.additional_data
         if 'size' of file
-          content.file_size = file.size
+          content.filesize = file.size
         if 'type' of file
-          content.file_type = file.type
+          content.filetype = file.type
 
         $.post(to, content)
         data.context.remove() if data.context # remove progress bar
