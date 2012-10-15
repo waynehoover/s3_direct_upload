@@ -2,8 +2,8 @@
 require File.expand_path('../lib/s3_direct_upload/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["WayneH"]
-  gem.email         = ["wayne@blissofbeing.com"]
+  gem.authors       = ["Wayne Hoover"]
+  gem.email         = ["w@waynehoover.com"]
   gem.description   = %q{Direct Upload to Amazon S3 With CORS and jquery-file-upload}
   gem.summary       = %q{Gives a form helper for Rails which allows direct uploads to s3. Based on RailsCast#383}
   gem.homepage      = ""
