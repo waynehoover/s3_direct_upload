@@ -16,7 +16,7 @@ module S3DirectUpload
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: S3DirectUpload.config.bucket,
           acl: "public-read",
-          expiration: 10.hours.from_now,
+          expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
           as: "file",
           key: key
