@@ -43,9 +43,9 @@ $.fn.S3Uploader = (options) ->
         file = data.files[0]
         domain = $uploadForm.attr('action')
         path = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
-        to = $uploadForm.data('post')
+
         content = {}
-        content[$uploadForm.data('as')] = domain + path + '/' + file.name
+        content.url = domain + path + '/' + file.name
         content.filename = file.name
         content.filepath = path
         if settings.additional_data
@@ -54,9 +54,14 @@ $.fn.S3Uploader = (options) ->
           content.filesize = file.size
         if 'type' of file
           content.filetype = file.type
-
-        $.post(to, content)
+        
+        to = $uploadForm.data('post')
+        if to
+          content[$uploadForm.data('as')] = content.url
+          $.post(to, content)
+        
         data.context.remove() if data.context # remove progress bar
+        $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
         if current_files.length == 0
