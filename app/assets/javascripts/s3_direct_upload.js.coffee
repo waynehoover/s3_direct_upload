@@ -30,7 +30,7 @@ $.fn.S3Uploader = (options) ->
         current_files.push data
         file = data.files[0]
         unless settings.before_add and not settings.before_add(file)
-          data.context = $(tmpl("template-upload", file))
+          data.context = $(tmpl("template-upload", file)) if $('#template-upload').length > 0
           $uploadForm.append(data.context)
           data.submit()
 
