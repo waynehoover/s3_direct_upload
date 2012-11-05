@@ -24,7 +24,7 @@ $.fn.S3Uploader = (options) ->
   current_files = []
 
   setUploadForm = ->
-    $uploadForm.find("input:file").fileupload
+    $uploadForm.fileupload
 
       add: (e, data) ->
         current_files.push data

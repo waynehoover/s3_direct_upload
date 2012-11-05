@@ -44,7 +44,7 @@ module S3DirectUpload
           :policy => policy,
           :signature => signature,
           "AWSAccessKeyId" => @options[:aws_access_key_id],
-          success_action_status: "200"
+          success_action_status: "201"
         }
       end
 
@@ -70,7 +70,7 @@ module S3DirectUpload
             ["starts-with","$Content-Type",""],
             {bucket: @options[:bucket]},
             {acl: @options[:acl]},
-            {success_action_status: "200"}
+            {success_action_status: "201"}
           ]
         }
       end
