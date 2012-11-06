@@ -40,20 +40,7 @@ $.fn.S3Uploader = (options) ->
           data.context.find('.bar').css('width', progress + '%')
 
       done: (e, data) ->
-        file = data.files[0]
-        domain = $uploadForm.attr('action')
-        path = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
-
-        content = {}
-        content.url = domain + path + '/' + file.name
-        content.filename = file.name
-        content.filepath = path
-        if settings.additional_data
-          content = $.extend content, settings.additional_data
-        if 'size' of file
-          content.filesize = file.size
-        if 'type' of file
-          content.filetype = file.type
+        content = build_content_object $uploadForm, data.files[0]
         
         to = $uploadForm.data('post')
         if to
@@ -68,9 +55,9 @@ $.fn.S3Uploader = (options) ->
           $(document).trigger("s3_uploads_complete")
 
       fail: (e, data) ->
-        alert("#{data.files[0].name} failed to upload.")
-        console.log("Upload failed:")
-        console.log(data)
+        content = build_content_object $uploadForm, data.files[0]
+        content.error_thrown = data.errorThrown
+        $uploadForm.trigger("s3_upload_failed", [content])
 
       formData: (form) ->
         data = form.serializeArray()
@@ -84,6 +71,18 @@ $.fn.S3Uploader = (options) ->
         data[1].value = settings.path + data[1].value
 
         data
+
+  build_content_object = ($uploadForm, file) ->
+    domain = $uploadForm.attr('action')
+    path = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+    content          = {}
+    content.url      = domain + path + '/' + file.name
+    content.filename = file.name
+    content.filepath = path
+    content.filesize = file.size if 'size' of file
+    content.filetype = file.type if 'type' of file
+    content = $.extend content, settings.additional_data if settings.additional_data
+    content
 
   #public methods
   @initialize = ->
