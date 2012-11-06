@@ -62,7 +62,7 @@ jQuery ->
   $("#myS3Uploader").S3Uploader()
 ```
 
-Also place this template in the same view for the progress bars:
+Optionally, you can also place this template in the same view for the progress bars:
 ```js+erb
 <script id="template-upload" type="text/x-tmpl">
 <div class="upload">
@@ -73,7 +73,7 @@ Also place this template in the same view for the progress bars:
 ```
 
 ## Options for form helper
-`post:` -> url in which is POST'd to after file is uploaded to S3. Example: model_url
+`post:` -> url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
 
 `as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
 
@@ -87,6 +87,7 @@ Also place this template in the same view for the progress bars:
 
 `class:` -> optional html class for the form.
 
+`data:` -> Optional html data
 
 ### Persisting the S3 url
 It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given in the `as` option). So to access your files later.
@@ -128,31 +129,14 @@ Note: the file path in your s3 bucket will effectively be `path + key`.
 
 This would be accessable in your params hash as  `params[:key][:value]`
 
-`before_add` -> Callback function that executes before a file is added to the que. It is passed file object and expects `true` or `false` to be returned.
+`remove_completed_progress_bar` -> By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
+
+`before_add` -> Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned.
 
 This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
-### Public methods
-You can change the settings on your form later on by accessing the jQuery instance:
-
-```cofeescript
-jQuery ->
-  v = $("#myS3Uploader").S3Uploader()
-  ...
-  v.path("new/path/") 
-  v.additional_data("newdata")
-
-### Global Event Hooks
-
-When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
-```javascript
-$(document).bind('s3_uploads_complete', function(){
-    ...
-    alert("All Uploads completed")
-}); 
-````
 ### Example with all options.
-```cofeescript
+```coffeescript
 jQuery ->
   $("#myS3Uploader").S3Uploader
     path: 'path/to/my/files/on/s3'
@@ -160,10 +144,49 @@ jQuery ->
     before_add: myCallBackFunction() # must return true or false if set
 ```
 
+### Public methods
+You can change the settings on your form later on by accessing the jQuery instance:
 
+```coffeescript
+jQuery ->
+  v = $("#myS3Uploader").S3Uploader()
+  ...
+  v.path("new/path/") 
+  v.additional_data("newdata")
+```
+
+### Javascript Events Hooks
+
+#### Successfull upload
+When a file has been successfully to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
+
+`url`      -> The full URL to the uploaded file on S3.
+`filename` -> The original name of the uploaded file.
+`filepath` -> The path to the file (without the filename or domain)
+`filesize` -> The size of the uploaded file.
+`filetype` -> The type of the uploaded file.
+
+This hook could be used for example to fill a form hidden field with the returned S3 url :
+```coffeescript
+$('#myS3Uploader').bind "s3_upload_complete", (e, content) ->
+  $('#someHiddenField').val(content.url)
+```
+
+#### Failed upload
+When an error occured during the transferm the `s3_upload_failed` is triggered on the form with the same `content` object is passed for the successful upload with the addition of the `error_thrown` attribute. The most basic way to handle this error would be to display an alert message to the user in case the upload fails :
+```coffeescript
+$('#myS3Uploader').bind "s3_upload_failed", (e, content) ->
+  alert("#{content.filename} failed to upload : #{content.error_thrown}")
+```
+
+#### All uploads completed
+When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
+```coffeescript
+$(document).bind 's3_uploads_complete', ->
+    alert("All Uploads completed")
+```
 
 ## Contributing / TODO
-
 This is just a simple gem that only really provides some javascript and a form helper. 
 This gem could go all sorts of ways based on what people want and how people contribute. 
 Ideas:
@@ -176,7 +199,6 @@ Ideas:
 
 
 ## Credit
-
 This gem is basically a small wrapper around code that [Ryan Bates](http://github.com/rbates) wrote for [Railscast#383](http://railscasts.com/episodes/383-uploading-to-amazon-s3). Most of the code in this gem was extracted from [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload). 
 
 Thank you Ryan Bates!
