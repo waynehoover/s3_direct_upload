@@ -141,6 +141,7 @@ jQuery ->
   $("#myS3Uploader").S3Uploader
     path: 'path/to/my/files/on/s3'
     additional_data: {key: 'value'}
+    remove_completed_progress_bar: false
     before_add: myCallBackFunction() # must return true or false if set
 ```
 
@@ -160,11 +161,11 @@ jQuery ->
 #### Successfull upload
 When a file has been successfully to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 
-`url`      -> The full URL to the uploaded file on S3.
-`filename` -> The original name of the uploaded file.
-`filepath` -> The path to the file (without the filename or domain)
-`filesize` -> The size of the uploaded file.
-`filetype` -> The type of the uploaded file.
+* `url`       The full URL to the uploaded file on S3.
+* `filename`  The original name of the uploaded file.
+* `filepath`  The path to the file (without the filename or domain)
+* `filesize`  The size of the uploaded file.
+* `filetype`  The type of the uploaded file.
 
 This hook could be used for example to fill a form hidden field with the returned S3 url :
 ```coffeescript
