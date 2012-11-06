@@ -22,7 +22,7 @@ end
 ```
 
 Make sure your AWS S3 CORS settings for your bucket look something like this:
-```
+```xml
 <CORSConfiguration>
     <CORSRule>
         <AllowedOrigin>http://0.0.0.0:3000</AllowedOrigin>
@@ -73,21 +73,14 @@ Optionally, you can also place this template in the same view for the progress b
 ```
 
 ## Options for form helper
-`post:` -> url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
-
-`as:` -> parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
-
-`key:` -> key on s3. defaults to `"uploads/#{SecureRandom.hex}/${filename}"`. needs to be at least `"${filename}"`.
-
-`acl:` -> acl for files uploaded to s3, defaults to "public-read"
-
-`max_file_size:` -> maximum file size, defaults to 500.megabytes
-
-`id:` -> html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
-
-`class:` -> optional html class for the form.
-
-`data:` -> Optional html data
+* `post:` url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
+* `as:` parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
+* `key:` key on s3. defaults to `"uploads/#{SecureRandom.hex}/${filename}"`. needs to be at least `"${filename}"`.
+* `acl:` acl for files uploaded to s3, defaults to "public-read"
+* `max_file_size:` maximum file size, defaults to 500.megabytes
+* `id:` html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
+* `class:` optional html class for the form.
+* `data:` Optional html data
 
 ### Persisting the S3 url
 It is recommended that you persist the image_url that is sent back from the POST request (to the url given to the `post` option and as the key given in the `as` option). So to access your files later.
@@ -121,12 +114,12 @@ Use the javascript in `s3_direct_upload` as a guide.
 
 ## Options for S3Upload jQuery Plugin
 
-* `path` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`  
+* `path:` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`  
   Note: the file path in your s3 bucket will effectively be `path + key`.
-* `additional_data` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`  
+* `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`  
   Example: `{key: value}` 
-* `remove_completed_progress_bar` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
-* `before_add` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
+* `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
+* `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
 ### Example with all options.
 ```coffeescript
