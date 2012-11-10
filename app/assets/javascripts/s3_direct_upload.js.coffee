@@ -18,6 +18,7 @@ $.fn.S3Uploader = (options) ->
     path: ''
     additional_data: null
     before_add: null
+    remove_completed_progress_bar: true
 
   $.extend settings, options
 
@@ -47,7 +48,7 @@ $.fn.S3Uploader = (options) ->
           content[$uploadForm.data('as')] = content.url
           $.post(to, content)
         
-        data.context.remove() if data.context # remove progress bar
+        data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
