@@ -33,7 +33,7 @@ module S3DirectUpload
           data: {
             post: @options[:post],
             as: @options[:as]
-          }
+          }.reverse_merge(@options[:data] || {})
         }
       end
 
