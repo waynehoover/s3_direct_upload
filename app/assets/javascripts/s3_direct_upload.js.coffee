@@ -19,6 +19,8 @@ $.fn.S3Uploader = (options) ->
     additional_data: null
     before_add: null
     remove_completed_progress_bar: true
+    progress_container: $uploadForm
+
 
   $.extend settings, options
 
@@ -26,6 +28,9 @@ $.fn.S3Uploader = (options) ->
 
   setUploadForm = ->
     $uploadForm.fileupload
+
+      start: (e) ->
+        $uploadForm.trigger("s3_upload_start", [content])
 
       add: (e, data) ->
         current_files.push data
