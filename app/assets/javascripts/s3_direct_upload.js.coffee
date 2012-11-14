@@ -30,14 +30,14 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.fileupload
 
       start: (e) ->
-        $uploadForm.trigger("s3_upload_start", [content])
+        $uploadForm.trigger("s3_upload_start", [e])
 
       add: (e, data) ->
         current_files.push data
         file = data.files[0]
         unless settings.before_add and not settings.before_add(file)
           data.context = $(tmpl("template-upload", file)) if $('#template-upload').length > 0
-          $uploadForm.append(data.context)
+          settings['progress_container'].append(data.context)
           data.submit()
 
       progress: (e, data) ->

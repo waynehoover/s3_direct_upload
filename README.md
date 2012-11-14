@@ -120,6 +120,7 @@ Use the javascript in `s3_direct_upload` as a guide.
   Example: `{key: value}` 
 * `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
 * `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
+* `progress_container`: This jQuery container will have the compiled '#template-upload' appended to it during upload.
 
 ### Example with all options.
 ```coffeescript
@@ -171,6 +172,13 @@ When all uploads finish in a batch an `s3_uploads_complete` event will be trigge
 ```coffeescript
 $(document).bind 's3_uploads_complete', ->
     alert("All Uploads completed")
+```
+
+#### First upload started
+Fired `s3_uploads_start` once when any batch of uploads is starting.
+```coffeescript
+$('#myS3Uploader').bind 's3_upload_start', (e) ->
+  $('uploadArea').show()
 ```
 
 ## Contributing / TODO
