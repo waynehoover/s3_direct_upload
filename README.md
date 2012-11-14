@@ -177,7 +177,7 @@ $(document).bind 's3_uploads_complete', ->
 #### First upload started
 Fired `s3_uploads_start` once when any batch of uploads is starting.
 ```coffeescript
-$('#myS3Uploader').bind 's3_upload_start', (e) ->
+$('#myS3Uploader').bind 's3_uploads_start', (e) ->
   $('uploadArea').show()
 ```
 

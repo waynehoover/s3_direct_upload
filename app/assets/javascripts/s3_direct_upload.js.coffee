@@ -30,7 +30,7 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.fileupload
 
       start: (e) ->
-        $uploadForm.trigger("s3_upload_start", [e])
+        $uploadForm.trigger("s3_uploads_start", [e])
 
       add: (e, data) ->
         current_files.push data
