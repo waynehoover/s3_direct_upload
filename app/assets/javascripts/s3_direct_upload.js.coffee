@@ -74,16 +74,22 @@ $.fn.S3Uploader = (options) ->
         data
 
   build_content_object = ($uploadForm, file, result) ->
-    domain           = $uploadForm.attr('action')
-    path             = $('Key', result).text()
-    split_path       = path.split('/')
+    domain = $uploadForm.attr('action')
+    content = {}
+    if result # Use the S3 response to set the URL to avoid character encodings bugs
+      path             = $('Key', result).text()
+      split_path       = path.split('/')
+      content.url      = domain + path
+      content.filename = split_path[split_path.length - 1]
+      content.filepath = split_path.slice(0, split_path.length - 1).join('/')
+    else # IE8 and IE9 return a null result object so we use the file object instead
+      path             = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+      content.url      = domain + path + '/' + file.name
+      content.filename = file.name
+      content.filepath = path
 
-    content          = {}
-    content.url      = domain + path
-    content.filename = split_path[split_path.length - 1]
-    content.filepath = split_path.slice(0, split_path.length - 1).join('/')
-    content.filesize = file.size if 'size' of file
-    content.filetype = file.type if 'type' of file
+    content.filesize   = file.size if 'size' of file
+    content.filetype   = file.type if 'type' of file
     content = $.extend content, settings.additional_data if settings.additional_data
     content
 
