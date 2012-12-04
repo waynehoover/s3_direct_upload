@@ -41,13 +41,13 @@ $.fn.S3Uploader = (options) ->
           data.context.find('.bar').css('width', progress + '%')
 
       done: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0]
-        
+        content = build_content_object $uploadForm, data.files[0], data.result
+
         to = $uploadForm.data('post')
         if to
           content[$uploadForm.data('as')] = content.url
           $.post(to, content)
-        
+
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
 
@@ -56,7 +56,7 @@ $.fn.S3Uploader = (options) ->
           $(document).trigger("s3_uploads_complete")
 
       fail: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0]
+        content = build_content_object $uploadForm, data.files[0], data.result
         content.error_thrown = data.errorThrown
         $uploadForm.trigger("s3_upload_failed", [content])
 
@@ -73,13 +73,15 @@ $.fn.S3Uploader = (options) ->
 
         data
 
-  build_content_object = ($uploadForm, file) ->
-    domain = $uploadForm.attr('action')
-    path = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+  build_content_object = ($uploadForm, file, result) ->
+    domain           = $uploadForm.attr('action')
+    path             = $('Key', result).text()
+    split_path       = path.split('/')
+
     content          = {}
-    content.url      = domain + path + '/' + file.name
-    content.filename = file.name
-    content.filepath = path
+    content.url      = domain + path
+    content.filename = split_path[split_path.length - 1]
+    content.filepath = split_path.slice(0, split_path.length - 1).join('/')
     content.filesize = file.size if 'size' of file
     content.filetype = file.type if 'type' of file
     content = $.extend content, settings.additional_data if settings.additional_data
