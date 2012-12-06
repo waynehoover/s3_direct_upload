@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.files         = Dir["{lib,app}/**/*"] + ["LICENSE", "README.md"]
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "s3_direct_upload"
+  gem.name          = "actionverb_s3_direct_upload"
   gem.require_paths = ["lib"]
   gem.version       = S3DirectUpload::VERSION
 
