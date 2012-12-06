@@ -144,6 +144,13 @@ jQuery ->
 
 ### Javascript Events Hooks
 
+#### First upload started
+`s3_uploads_start` is fired once when any batch of uploads is starting.
+```coffeescript
+$('#myS3Uploader').bind 's3_uploads_start', (e) ->
+  alert("Uploads have started")
+```
+
 #### Successfull upload
 When a file has been successfully to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 

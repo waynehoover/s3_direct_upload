@@ -35,6 +35,9 @@ $.fn.S3Uploader = (options) ->
           $uploadForm.append(data.context)
           data.submit()
 
+      start: (e) ->
+        $uploadForm.trigger("s3_uploads_start", [e])
+
       progress: (e, data) ->
         if data.context
           progress = parseInt(data.loaded / data.total * 100, 10)
