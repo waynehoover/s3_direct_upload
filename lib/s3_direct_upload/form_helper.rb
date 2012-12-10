@@ -49,7 +49,7 @@ module S3DirectUpload
       end
 
       def key
-        @key ||= "uploads/#{SecureRandom.hex}/${filename}"
+        @key ||= "uploads/#{DateTime.now.utc.strftime("%Y%m%dT%H%MZ")}_#{SecureRandom.hex}/${filename}"
       end
 
       def url
