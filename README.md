@@ -180,6 +180,33 @@ $(document).bind 's3_uploads_complete', ->
     alert("All Uploads completed")
 ```
 
+## Cleaning old uploads on S3
+You may be processing the files upon upload and reuploading them to another
+bucket or directory. If so you can remove the originali files by running a
+rake task.
+
+First, add the fog gem to your `Gemfile` and run `bundle`:
+```ruby
+  require 'fog'
+```
+
+Then, run the rake task to delete uploads older than 2 days:
+```
+  $ rake s3_direct_upload:clean_remote_uploads
+  Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/06 - PCR_RYA014-25.jpg"
+  Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/05 - PCR_RYA014-24.jpg"
+  $
+```
+
+Optionally customize the prefix used for cleaning (default is `uploads/#{2.days.ago.strftime('%Y%m%d')}`):
+**config/initalizers/s3_direct_upload.rb**
+```ruby
+S3DirectUpload.config do |c|
+  # ...
+  c.prefix_to_clean = "my_path/#{1.week.ago.strftime('%y%m%d')}"
+end
+```
+
 ## Contributing / TODO
 This is just a simple gem that only really provides some javascript and a form helper. 
 This gem could go all sorts of ways based on what people want and how people contribute. 
