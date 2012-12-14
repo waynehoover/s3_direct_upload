@@ -41,10 +41,11 @@ module S3DirectUpload
         {
           :key => @options[:key] || key,
           :acl => @options[:acl],
+          "AWSAccessKeyId" => @options[:aws_access_key_id],
           :policy => policy,
           :signature => signature,
-          "AWSAccessKeyId" => @options[:aws_access_key_id],
-          success_action_status: "201"
+          :success_action_status => "201",
+          'X-Requested-With' => 'xhr'
         }
       end
 
@@ -66,6 +67,7 @@ module S3DirectUpload
           conditions: [
             ["starts-with", "$utf8", ""],
             ["starts-with", "$key", ""],
+            ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
             ["starts-with","$Content-Type",""],
             {bucket: @options[:bucket]},
