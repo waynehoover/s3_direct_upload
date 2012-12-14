@@ -55,8 +55,7 @@ $.fn.S3Uploader = (options) ->
         $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
-        if current_files.length == 0
-          $(document).trigger("s3_uploads_complete")
+        $uploadForm.trigger("s3_uploads_complete") unless current_files.length
 
       fail: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
