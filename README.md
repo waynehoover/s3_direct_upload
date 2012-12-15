@@ -40,6 +40,9 @@ Add the following js and css to your asset pipeline:
 
 **application.js.coffee**
 ```coffeescript
+#= require jquery-fileupload/vendor/jquery.ui.widget
+#= require jquery-fileupload/jquery.iframe-transport
+#= require jquery-fileupload/jquery.fileupload
 #= require s3_direct_upload
 ```
 
@@ -56,10 +59,10 @@ Create a new view that uses the form helper `s3_uploader_form`:
 <% end %>
 ```
 
-Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
+Then in your application.js.coffee, call the s3upload jQuery plugin on the element you created above:
 ```coffeescript
 jQuery ->
-  $("#myS3Uploader").S3Uploader()
+  $("#myS3Uploader").s3upload()
 ```
 
 Optionally, you can also place this template in the same view for the progress bars:
@@ -119,65 +122,91 @@ Use the javascript in `s3_direct_upload` as a guide.
 * `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`  
   Example: `{key: value}` 
 * `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
-* `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
+* Supported callbacks (see below)
 
-### Example with all options.
+### Example with all options
 ```coffeescript
 jQuery ->
-  $("#myS3Uploader").S3Uploader
+  $("#myS3Uploader").s3upload
     path: 'path/to/my/files/on/s3'
     additional_data: {key: 'value'}
     remove_completed_progress_bar: false
-    before_add: myCallBackFunction() # must return true or false if set
+    before_add: (e, data) ->
+      return false unless (/(\.|\/)jpg$/i).test(data.file.type)
+    start: (e, data) -> // Do sth
+    done: (e, data) -> // Do sth
+    fail: (e, data) -> // Do sth
+
 ```
 
-### Public methods
-You can change the settings on your form later on by accessing the jQuery instance:
+### Change options
+You can change the options on your form by using the `option` method:
 
 ```coffeescript
 jQuery ->
-  v = $("#myS3Uploader").S3Uploader()
-  ...
-  v.path("new/path/") 
-  v.additional_data("newdata")
+  $("#myS3Uploader").s3upload("option", "additional_data", {foo: "bar"})
+  $("#myS3Uploader").s3upload("option", "path", "new/path/")
 ```
 
-### Javascript Events Hooks
+### Javascript Event Hooks
+
+The S3 upload widget provides two ways to use callback hooks:
+```coffeescript
+$('#myS3Uploader').s3upload(
+  start: ->
+    alert("start 1")
+).on("s3uploadstart", ->
+  alert("start 2")
+)
+```
+
+#### File added
+`before_add` is fired before a file is added to the queue. It passes the file object through `data.file` and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
+```coffeescript
+$('#myS3Uploader').on 's3uploadbefore_add', (e, data) ->
+  alert("Uploads have started")
+```
+
+#### Progress
+During the upload process the `progress` event is fired. The callback receives a `data` object with the following attributes:
+
+* `loaded`: Number of bytes already loaded
+* `total`: Number of total bytes
+* `percentage`: Percentage of loaded bytes
+
+```coffeescript
+$('#myS3Uploader').on 's3uploadprogress', (e, data) ->
+  $(".bar").css("width", "#{data.percentage}%")
+```
 
 #### First upload started
-`s3_uploads_start` is fired once when any batch of uploads is starting.
+`start` is fired once when any batch of uploads is starting.
 ```coffeescript
-$('#myS3Uploader').bind 's3_uploads_start', (e) ->
+$('#myS3Uploader').on 's3uploadstart', (e) ->
   alert("Uploads have started")
 ```
 
 #### Successfull upload
-When a file has been successfully to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
+When a file has been successfully to S3, the `done` event is triggered on the form. A `data` object is passed along with the following attributes :
 
 * `url`       The full URL to the uploaded file on S3.
 * `filename`  The original name of the uploaded file.
 * `filepath`  The path to the file (without the filename or domain)
 * `filesize`  The size of the uploaded file.
 * `filetype`  The type of the uploaded file.
+* `filekey`   The S3 key of the uploaded file ("#{filepath}/#{filename}").
 
 This hook could be used for example to fill a form hidden field with the returned S3 url :
 ```coffeescript
-$('#myS3Uploader').bind "s3_upload_complete", (e, content) ->
-  $('#someHiddenField').val(content.url)
+$('#myS3Uploader').on "s3uploaddone", (e, data) ->
+  $('#someHiddenField').val(data.url)
 ```
 
 #### Failed upload
-When an error occured during the transferm the `s3_upload_failed` is triggered on the form with the same `content` object is passed for the successful upload with the addition of the `error_thrown` attribute. The most basic way to handle this error would be to display an alert message to the user in case the upload fails :
+When an error occured during the transferm the `fail` is triggered on the form with the same `data` object is passed for the successful upload with the addition of the `error_thrown` attribute. The most basic way to handle this error would be to display an alert message to the user in case the upload fails :
 ```coffeescript
-$('#myS3Uploader').bind "s3_upload_failed", (e, content) ->
-  alert("#{content.filename} failed to upload : #{content.error_thrown}")
-```
-
-#### All uploads completed
-When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
-```coffeescript
-$(document).bind 's3_uploads_complete', ->
-    alert("All Uploads completed")
+$('#myS3Uploader').on "s3uploadfail", (e, data) ->
+  alert("#{data.filename} failed to upload : #{data.error_thrown}")
 ```
 
 ## Cleaning old uploads on S3
