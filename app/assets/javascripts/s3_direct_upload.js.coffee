@@ -52,6 +52,7 @@ $.fn.S3Uploader = (options) ->
           $.post(to, content)
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
+        $uploadForm.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
         $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
@@ -72,7 +73,7 @@ $.fn.S3Uploader = (options) ->
 
         data[1].value = settings.path + data[1].value #the key
         data
-        
+
   build_content_object = ($uploadForm, file, result) ->
     content = {}
     if result # Use the S3 response to set the URL to avoid character encodings bugs
