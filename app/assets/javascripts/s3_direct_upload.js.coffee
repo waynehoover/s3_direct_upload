@@ -49,7 +49,17 @@ $.fn.S3Uploader = (options) ->
         to = $uploadForm.data('post')
         if to
           content[$uploadForm.data('as')] = content.url
-          $.post(to, content)
+
+          $.ajax
+            type: 'POST'
+            url: to
+            data: content
+            beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
+            complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
+            success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
+            error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
+
+          # $.post(to, content)
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
