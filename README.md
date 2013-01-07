@@ -1,7 +1,7 @@
 # S3DirectUpload
 
 Easily generate a form that allows you to upload directly to Amazon S3.
-Multi file uploading supported by jquery-fileupload. 
+Multi file uploading supported by jquery-fileupload.
 
 Code extracted from Ryan Bates' [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
 
@@ -114,10 +114,10 @@ Use the javascript in `s3_direct_upload` as a guide.
 
 ## Options for S3Upload jQuery Plugin
 
-* `path:` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`  
+* `path:` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`
   Note: the file path in your s3 bucket will effectively be `path + key`.
-* `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`  
-  Example: `{key: value}` 
+* `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`
+  Example: `{key: value}`
 * `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
 * `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 
@@ -138,7 +138,7 @@ You can change the settings on your form later on by accessing the jQuery instan
 jQuery ->
   v = $("#myS3Uploader").S3Uploader()
   ...
-  v.path("new/path/") 
+  v.path("new/path/")
   v.additional_data("newdata")
 ```
 
@@ -180,6 +180,15 @@ $(document).bind 's3_uploads_complete', ->
     alert("All Uploads completed")
 ```
 
+#### Rails AJAX Callbacks
+
+In addition, the regular rails ajax callbacks will trigger on the form with regards to the POST to the server.
+
+```coffeescript
+$('#myS3Uploader').bind "ajax:success", (e, data) ->
+  alert("server was notified of new file on S3; responded with '#{data}")
+```
+
 ## Cleaning old uploads on S3
 You may be processing the files upon upload and reuploading them to another
 bucket or directory. If so you can remove the originali files by running a
@@ -208,10 +217,10 @@ end
 ```
 
 ## Contributing / TODO
-This is just a simple gem that only really provides some javascript and a form helper. 
-This gem could go all sorts of ways based on what people want and how people contribute. 
+This is just a simple gem that only really provides some javascript and a form helper.
+This gem could go all sorts of ways based on what people want and how people contribute.
 Ideas:
-* More specs! 
+* More specs!
 * More options to control file types, ability to batch upload.
 * More convention over configuration on rails side
 * Create generators.
@@ -220,7 +229,7 @@ Ideas:
 
 
 ## Credit
-This gem is basically a small wrapper around code that [Ryan Bates](http://github.com/rbates) wrote for [Railscast#383](http://railscasts.com/episodes/383-uploading-to-amazon-s3). Most of the code in this gem was extracted from [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload). 
+This gem is basically a small wrapper around code that [Ryan Bates](http://github.com/rbates) wrote for [Railscast#383](http://railscasts.com/episodes/383-uploading-to-amazon-s3). Most of the code in this gem was extracted from [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
 
 Thank you Ryan Bates!
 
