@@ -15,7 +15,7 @@ module S3DirectUpload
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: S3DirectUpload.config.bucket,
-          region: S3DirectUpload.config.region rescue "s3",
+          region: defined?(S3DirectUpload.config.region) ? S3DirectUpload.config.region : "s3",
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
