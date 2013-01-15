@@ -15,6 +15,7 @@ module S3DirectUpload
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: S3DirectUpload.config.bucket,
+          region: S3DirectUpload.config.region rescue "s3",
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
@@ -54,7 +55,7 @@ module S3DirectUpload
       end
 
       def url
-        "https://s3.amazonaws.com/#{@options[:bucket]}/"
+        "https://#{@options[:region]}.amazonaws.com/#{@options[:bucket]}/"
       end
 
       def policy
