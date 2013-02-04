@@ -31,6 +31,8 @@ $.fn.S3Uploader = (options) ->
       add: (e, data) ->
         current_files.push data
         file = data.files[0]
+        file.unique_id = Math.random().toString(36).substr(2,16)
+
         unless settings.before_add and not settings.before_add(file)
           data.context = $(tmpl("template-upload", file)) if $('#template-upload').length > 0
           $uploadForm.append(data.context)
@@ -100,6 +102,7 @@ $.fn.S3Uploader = (options) ->
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
+    content.unique_id  = file.unique_id if 'unique_id' of file
     content = $.extend content, settings.additional_data if settings.additional_data
     content
 
