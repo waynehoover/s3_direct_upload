@@ -66,7 +66,7 @@ jQuery ->
 Optionally, you can also place this template in the same view for the progress bars:
 ```js+erb
 <script id="template-upload" type="text/x-tmpl">
-<div class="upload">
+<div id="file-{%=o.unique_id%}" class="upload">
   {%=o.name%}
   <div class="progress"><div class="bar" style="width: 0%"></div></div>
 </div>
