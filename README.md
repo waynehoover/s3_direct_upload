@@ -117,11 +117,12 @@ Use the javascript in `s3_direct_upload` as a guide.
 
 * `path:` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`
   Note: the file path in your s3 bucket will effectively be `path + key`.
-* `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessable in your params hash as  `params[:key][:value]`
+* `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessible in your params hash as  `params[:key][:value]`
   Example: `{key: value}`
 * `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
 * `remove_failed_progress_bar:` By default, the progress bar will not be removed when uploads fail. You can set this to `true` if you want to remove the progress bar.
 * `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
+* `progress_bar_target:` The jQuery selector for the element where you want the progress bars to be appended to. Default is the form element.
 
 ### Example with all options.
 ```coffeescript
@@ -131,6 +132,7 @@ jQuery ->
     additional_data: {key: 'value'}
     remove_completed_progress_bar: false
     before_add: myCallBackFunction() # must return true or false if set
+    progress_bar_target: $('.js-progress-bars')
 ```
 
 ### Public methods
