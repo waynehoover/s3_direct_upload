@@ -20,7 +20,8 @@ module S3DirectUpload
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
           as: "file",
-          key: key
+          key: key,
+          key_starts_with: ""
         )
       end
 
@@ -67,7 +68,7 @@ module S3DirectUpload
           expiration: @options[:expiration],
           conditions: [
             ["starts-with", "$utf8", ""],
-            ["starts-with", "$key", ""],
+            ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
             ["starts-with","$Content-Type",""],
