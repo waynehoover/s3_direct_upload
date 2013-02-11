@@ -1,3 +1,8 @@
+require 'rubygems'
+require 'bundler/setup'
+
+
+require 'active_support/all'
 require 's3_direct_upload'
 
 RSpec.configure do |config|
