@@ -77,7 +77,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `post:` url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
 * `as:` parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
 * `key:` key on s3. defaults to `"uploads/#{SecureRandom.hex}/${filename}"`. needs to be at least `"${filename}"`.
-* `key_starts_with:` constraint on key on s3. Defaults to "" (no constraint), but recommended value is `uploads/`.
+* `key_starts_with:` constraint on key on s3. Defaults to `uploads/`. if you change the `key` option, make sure this starts with what you put there. If you set this as a blank string the upload path to s3 can be anything, so be careful.
 * `acl:` acl for files uploaded to s3, defaults to "public-read"
 * `max_file_size:` maximum file size, defaults to 500.megabytes
 * `id:` html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
@@ -117,7 +117,7 @@ Use the javascript in `s3_direct_upload` as a guide.
 ## Options for S3Upload jQuery Plugin
 
 * `path:` manual path for the files on your s3 bucket. Example: `path/to/my/files/on/s3`
-  Note: the file path in your s3 bucket will effectively be `path + key`.
+  Note: Your path MUST start with the option you put in your form builder for `key_starts_with`, or else you will get S3 permission errors. The file path in your s3 bucket will be `path + key`.
 * `additional_data:` You can send additional data to your rails app in the persistence POST request. This would be accessible in your params hash as  `params[:key][:value]`
   Example: `{key: value}`
 * `remove_completed_progress_bar:` By default, the progress bar will be removed once the file has been successfully uploaded. You can set this to `false` if you want to keep the progress bar.
@@ -143,7 +143,7 @@ You can change the settings on your form later on by accessing the jQuery instan
 jQuery ->
   v = $("#myS3Uploader").S3Uploader()
   ...
-  v.path("new/path/")
+  v.path("new/path/") #only works when the key_starts_with option is blank. Not recommended.
   v.additional_data("newdata")
 ```
 
@@ -157,7 +157,7 @@ $('#myS3Uploader').bind 's3_uploads_start', (e) ->
 ```
 
 #### Successfull upload
-When a file has been successfully to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
+When a file has been successfully uploaded to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 
 * `url`       The full URL to the uploaded file on S3.
 * `filename`  The original name of the uploaded file.

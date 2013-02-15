@@ -20,8 +20,8 @@ module S3DirectUpload
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
           as: "file",
-          key: key,
-          key_starts_with: ""
+          key_starts_with: "uploads/",
+          key: key
         )
       end
 

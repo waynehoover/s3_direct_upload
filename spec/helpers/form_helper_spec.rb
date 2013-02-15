@@ -10,9 +10,9 @@ describe S3DirectUpload::UploadHelper::S3Uploader do
         s3_uploader.policy_data[:conditions].should include ["starts-with", "$key", key_starts_with]
       end
 
-      it "defaults to an empty string (any location within bucket)" do
+      it "defaults to 'uploads/'" do
         s3_uploader = S3DirectUpload::UploadHelper::S3Uploader.new({})
-        s3_uploader.policy_data[:conditions].should include ["starts-with", "$key", ""]
+        s3_uploader.policy_data[:conditions].should include ["starts-with", "$key", "uploads/"]
       end
     end
   end
