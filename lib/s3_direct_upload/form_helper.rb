@@ -74,7 +74,7 @@ module S3DirectUpload
             {bucket: @options[:bucket]},
             {acl: @options[:acl]},
             {success_action_status: "201"}
-          ]
+          ] + (@options[:conditions] || [])
         }
       end
 
