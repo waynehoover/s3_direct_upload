@@ -11,6 +11,7 @@ module S3DirectUpload
 
     class S3Uploader
       def initialize(options)
+        @key_starts_with = options[:key_starts_with] || "uploads/"
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
@@ -21,7 +22,7 @@ module S3DirectUpload
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
           as: "file",
-          key_starts_with: "uploads/",
+          key_starts_with: @key_starts_with,
           key: key
         )
       end
@@ -53,7 +54,7 @@ module S3DirectUpload
       end
 
       def key
-        @key ||= "uploads/#{DateTime.now.utc.strftime("%Y%m%dT%H%MZ")}_#{SecureRandom.hex}/${filename}"
+        @key ||= "#{@key_starts_with}#{DateTime.now.utc.strftime("%Y%m%dT%H%MZ")}_#{SecureRandom.hex}/${filename}"
       end
 
       def url
