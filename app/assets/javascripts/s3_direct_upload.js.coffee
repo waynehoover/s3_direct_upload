@@ -36,11 +36,11 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.fileupload
 
       add: (e, data) ->
-        current_files.push data
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
 
         unless settings.before_add and not settings.before_add(file)
+          current_files.push data
           data.context = $(tmpl("template-upload", file).trim()) if $('#template-upload').length > 0
           $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           if settings.click_submit_target
