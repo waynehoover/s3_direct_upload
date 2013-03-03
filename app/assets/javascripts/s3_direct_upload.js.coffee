@@ -28,9 +28,9 @@ $.fn.S3Uploader = (options) ->
   current_files = []
   forms_for_submit = []
   if settings.click_submit_target
-    settings.click_submit_target.click -> 
+    settings.click_submit_target.click ->
       form.submit() for form in forms_for_submit
-      false 
+      false
 
   setUploadForm = ->
     $uploadForm.fileupload
@@ -41,12 +41,12 @@ $.fn.S3Uploader = (options) ->
 
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
-          data.context = $(tmpl("template-upload", file).trim()) if $('#template-upload').length > 0
+          data.context = $($.trim(tmpl("template-upload", file))) if $('#template-upload').length > 0
           $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           if settings.click_submit_target
            forms_for_submit.push data
           else
-            data.submit()            
+            data.submit()
 
       start: (e) ->
         $uploadForm.trigger("s3_uploads_start", [e])
