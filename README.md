@@ -223,6 +223,10 @@ S3DirectUpload.config do |c|
 end
 ```
 
+Alternately, if you'd prefer for S3 to delete your old uploads automatically, you can do
+so by setting your bucket's 
+[Lifecycle Configuration](http://docs.aws.amazon.com/AmazonS3/latest/UG/LifecycleConfiguration.html).
+
 ## Contributing / TODO
 This is just a simple gem that only really provides some javascript and a form helper.
 This gem could go all sorts of ways based on what people want and how people contribute.
