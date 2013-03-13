@@ -59,12 +59,12 @@ $.fn.S3Uploader = (options) ->
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
 
-        to = $uploadForm.data('post')
+        to = $uploadForm.data('callback-url')
         if to
-          content[$uploadForm.data('as')] = content.url
+          content[$uploadForm.data('callback-param')] = content.url
 
           $.ajax
-            type: 'POST'
+            type: $uploadForm.data('callback-method')
             url: to
             data: content
             beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
