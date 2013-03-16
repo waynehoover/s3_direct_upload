@@ -21,7 +21,8 @@ module S3DirectUpload
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
-          as: "file",
+          callback_method: "POST",
+          callback_param: "file",
           key_starts_with: @key_starts_with,
           key: key
         )
@@ -35,8 +36,9 @@ module S3DirectUpload
           authenticity_token: false,
           multipart: true,
           data: {
-            post: @options[:post],
-            as: @options[:as]
+            callback_url: @options[:callback_url],
+            callback_method: @options[:callback_method],
+            callback_param: @options[:callback_param]
           }.reverse_merge(@options[:data] || {})
         }
       end

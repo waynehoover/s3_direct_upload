@@ -52,7 +52,7 @@ Add the following js and css to your asset pipeline:
 ## Usage
 Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
-<%= s3_uploader_form post: model_url, as: "model[image_url]", id: "myS3Uploader" do %>
+<%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "myS3Uploader" do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
 ```
@@ -74,8 +74,9 @@ Optionally, you can also place this template in the same view for the progress b
 ```
 
 ## Options for form helper
-* `post:` url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
-* `as:` parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
+* `callback_url:` url in which is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
+* `callback_method:` Defaults to POST. Use PUT and remove the multiple option from your file field to update a model.
+* `callback_param:` parameter value for the POST in which the key will be the URL of the file on S3. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
 * `key:` key on s3. defaults to `"uploads/#{SecureRandom.hex}/${filename}"`. needs to be at least `"${filename}"`.
 * `key_starts_with:` constraint on key on s3. Defaults to `uploads/`. if you change the `key` option, make sure this starts with what you put there. If you set this as a blank string the upload path to s3 can be anything, so be careful.
 * `acl:` acl for files uploaded to s3, defaults to "public-read"
