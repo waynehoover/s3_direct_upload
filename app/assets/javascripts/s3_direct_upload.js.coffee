@@ -96,7 +96,9 @@ $.fn.S3Uploader = (options) ->
           name: "Content-Type"
           value: fileType
 
-        data[1].value = settings.path + data[1].value #the key
+        # substitute upload timestamp and unique_id into key
+        key = data[1].value.replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
+        data[1].value = settings.path + key
         data
 
   build_content_object = ($uploadForm, file, result) ->
