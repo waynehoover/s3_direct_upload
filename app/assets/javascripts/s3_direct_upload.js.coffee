@@ -99,6 +99,7 @@ $.fn.S3Uploader = (options) ->
         # substitute upload timestamp and unique_id into key
         key = data[1].value.replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
         data[1].value = settings.path + key
+        data[8].value = this.files[0].webkitRelativePath
         data
 
   build_content_object = ($uploadForm, file, result) ->

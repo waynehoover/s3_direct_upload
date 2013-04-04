@@ -51,7 +51,8 @@ module S3DirectUpload
           :policy => policy,
           :signature => signature,
           :success_action_status => "201",
-          'X-Requested-With' => 'xhr'
+          'X-Requested-With' => 'xhr',
+          'x-amz-meta-original-filepath' => '{original_filepath}'
         }
       end
 
@@ -74,6 +75,7 @@ module S3DirectUpload
             ["starts-with", "$utf8", ""],
             ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
+            ["starts-with", "$x-amz-meta-original-filepath", ""],
             ["content-length-range", 0, @options[:max_file_size]],
             ["starts-with","$Content-Type",""],
             {bucket: @options[:bucket]},
