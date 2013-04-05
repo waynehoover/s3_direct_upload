@@ -115,8 +115,16 @@ $.fn.S3Uploader = (options) ->
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
     content.unique_id  = file.unique_id if 'unique_id' of file
+    content.relativePath = build_relativePath(file) if has_relativePath(file)
     content = $.extend content, settings.additional_data if settings.additional_data
     content
+
+  has_relativePath = (file) ->
+    file.relativePath || file.webkitRelativePath
+
+  build_relativePath = (file) ->
+    file.relativePath || (file.webkitRelativePath.split("/")[0..-2].join("/") + "/" if file.webkitRelativePath)
+
 
   #public methods
   @initialize = ->
