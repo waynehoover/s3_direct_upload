@@ -11,7 +11,7 @@ module S3DirectUpload
 
     def s3_uploader_hidden_fields(options = {}, &block)
       uploader = S3Uploader.new(options)
-      uploader.fields.map do |name, value|
+      {:utf8 => ""}.merge(uploader.fields).map do |name, value|
         hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
       end.join.html_safe
     end

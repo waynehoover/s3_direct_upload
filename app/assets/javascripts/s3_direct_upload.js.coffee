@@ -43,7 +43,7 @@ $.fn.S3Uploader = (options) ->
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
           data.context = $($.trim(tmpl("template-upload", file))) if $('#template-upload').length > 0
-          $(data.context).appendTo(settings.progress_bar_target || $uploaderElement)
+          $(data.context).appendTo(settings.progress_bar_target($(this)) || $uploaderElement)
           if settings.click_submit_target
            forms_for_submit.push data
           else
@@ -89,7 +89,8 @@ $.fn.S3Uploader = (options) ->
         $uploaderElement.trigger("s3_upload_failed", [content])
 
       formData: (form) ->
-        data = form.serializeArray()
+        data = $('.s3upload_hidden_fields').serializeArray()
+        #data = form.serializeArray()
         fileType = ""
         if "type" of @files[0]
           fileType = @files[0].type
@@ -117,7 +118,6 @@ $.fn.S3Uploader = (options) ->
     content.filetype   = file.type if 'type' of file
     content.unique_id  = file.unique_id if 'unique_id' of file
     content = $.extend content, settings.additional_data if settings.additional_data
-    content = $.extend content, $('.s3upload_hidden_fields').serializeArray()
     content
 
   #public methods
