@@ -12,7 +12,7 @@ $.fn.S3Uploader = (options) ->
 
     return this
 
-  $uploadForm = this
+  $uploaderElement = this
 
   settings =
     path: ''
@@ -32,8 +32,9 @@ $.fn.S3Uploader = (options) ->
       form.submit() for form in forms_for_submit
       false
 
-  setUploadForm = ->
-    $uploadForm.fileupload
+  setUploadElement = ->
+    $uploaderElement.fileupload
+      url: settings.url if settings.url
 
       add: (e, data) ->
         file = data.files[0]
@@ -42,14 +43,14 @@ $.fn.S3Uploader = (options) ->
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
           data.context = $($.trim(tmpl("template-upload", file))) if $('#template-upload').length > 0
-          $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
+          $(data.context).appendTo(settings.progress_bar_target || $uploaderElement)
           if settings.click_submit_target
            forms_for_submit.push data
           else
             data.submit()
 
       start: (e) ->
-        $uploadForm.trigger("s3_uploads_start", [e])
+        $uploaderElement.trigger("s3_uploads_start", [e])
 
       progress: (e, data) ->
         if data.context
@@ -57,35 +58,35 @@ $.fn.S3Uploader = (options) ->
           data.context.find('.bar').css('width', progress + '%')
 
       done: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
+        content = build_content_object $uploaderElement, data.files[0], data.result
 
-        to = $uploadForm.data('callback-url')
+        to = $uploaderElement.data('callback-url')
         if to
-          content[$uploadForm.data('callback-param')] = content.url
+          content[$uploaderElement.data('callback-param')] = content.url
 
           $.ajax
-            type: $uploadForm.data('callback-method')
+            type: $uploaderElement.data('callback-method')
             url: to
             data: content
-            beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
-            complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
-            success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
-            error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
+            beforeSend: ( xhr, settings )       -> $uploaderElement.trigger( 'ajax:beforeSend', [xhr, settings] )
+            complete:   ( xhr, status )         -> $uploaderElement.trigger( 'ajax:complete', [xhr, status] )
+            success:    ( data, status, xhr )   -> $uploaderElement.trigger( 'ajax:success', [data, status, xhr] )
+            error:      ( xhr, status, error )  -> $uploaderElement.trigger( 'ajax:error', [xhr, status, error] )
 
           # $.post(to, content)
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_complete", [content])
+        $uploaderElement.trigger("s3_upload_complete", [content])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
-        $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
+        $uploaderElement.trigger("s3_uploads_complete", [content]) unless current_files.length
 
       fail: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
+        content = build_content_object $uploaderElement, data.files[0], data.result
         content.error_thrown = data.errorThrown
 
         data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_failed", [content])
+        $uploaderElement.trigger("s3_upload_failed", [content])
 
       formData: (form) ->
         data = form.serializeArray()
@@ -101,26 +102,27 @@ $.fn.S3Uploader = (options) ->
         data[1].value = settings.path + key
         data
 
-  build_content_object = ($uploadForm, file, result) ->
+  build_content_object = ($uploaderElement, file, result) ->
     content = {}
     if result # Use the S3 response to set the URL to avoid character encodings bugs
       content.url      = $(result).find("Location").text()
       content.filepath = $('<a />').attr('href', content.url)[0].pathname
-    else # IE <= 9 return a null result object so we use the file object instead
-      domain           = $uploadForm.attr('action')
-      content.filepath = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
-      content.url      = domain + content.filepath + '/' + encodeURIComponent(file.name)
+    #else # IE <= 9 return a null result object so we use the file object instead
+      #domain           = $uploaderElement.attr('action')
+      #content.filepath = settings.path + $uploaderElement.find('input[name=key]').val().replace('/${filename}', '')
+      #content.url      = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
     content.unique_id  = file.unique_id if 'unique_id' of file
     content = $.extend content, settings.additional_data if settings.additional_data
+    content = $.extend content, $('.s3upload_hidden_fields').serializeArray()
     content
 
   #public methods
   @initialize = ->
-    setUploadForm()
+    setUploadElement()
     this
 
   @path = (new_path) ->

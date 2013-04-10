@@ -9,6 +9,18 @@ module S3DirectUpload
       end
     end
 
+    def s3_uploader_hidden_fields(options = {}, &block)
+      uploader = S3Uploader.new(options)
+      uploader.fields.map do |name, value|
+        hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
+      end.join.html_safe
+    end
+
+    def s3_uploader_field(options = {})
+      uploader = S3Uploader.new(options)
+      file_field_tag(:file, uploader.field_options).html_safe
+    end
+
     class S3Uploader
       def initialize(options)
         @key_starts_with = options[:key_starts_with] || "uploads/"
@@ -31,16 +43,30 @@ module S3DirectUpload
 
       def form_options
         {
-          id: @options[:id],
-          class: @options[:class],
           method: "post",
           authenticity_token: false,
           multipart: true,
+        }.merge(field_options)
+      end
+
+      def field_options
+        form_data_options.merge(form_preset_options)
+      end
+
+      def form_data_options
+        {
           data: {
-            callback_url: @options[:callback_url],
-            callback_method: @options[:callback_method],
-            callback_param: @options[:callback_param]
+              callback_url: @options[:callback_url],
+              callback_method: @options[:callback_method],
+              callback_param: @options[:callback_param]
           }.reverse_merge(@options[:data] || {})
+        }
+      end
+
+      def form_preset_options
+        {
+          id: @options[:id],
+          class: @options[:class],
         }
       end
 
