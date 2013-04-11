@@ -64,16 +64,15 @@ $.fn.S3Uploader = (options) ->
         if to
           content[$uploaderElement.data('callback-param')] = content.url
 
+          element = $(this)
           $.ajax
             type: $uploaderElement.data('callback-method')
             url: to
             data: content
-            beforeSend: ( xhr, settings )       -> $uploaderElement.trigger( 'ajax:beforeSend', [xhr, settings] )
-            complete:   ( xhr, status )         -> $uploaderElement.trigger( 'ajax:complete', [xhr, status] )
-            success:    ( data, status, xhr )   -> $uploaderElement.trigger( 'ajax:success', [data, status, xhr] )
-            error:      ( xhr, status, error )  -> $uploaderElement.trigger( 'ajax:error', [xhr, status, error] )
-
-          # $.post(to, content)
+            beforeSend: ( xhr, settings )       -> element.trigger( 'ajax:beforeSend', [xhr, settings] )
+            complete:   ( xhr, status )         -> element.trigger( 'ajax:complete', [xhr, status] )
+            success:    ( data, status, xhr )   -> element.trigger( 'ajax:success', [data, status, xhr] )
+            error:      ( xhr, status, error )  -> element.trigger( 'ajax:error', [xhr, status, error] )
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploaderElement.trigger("s3_upload_complete", [content])
@@ -90,7 +89,6 @@ $.fn.S3Uploader = (options) ->
 
       formData: (form) ->
         data = $('.s3upload_hidden_fields').serializeArray()
-        #data = form.serializeArray()
         fileType = ""
         if "type" of @files[0]
           fileType = @files[0].type

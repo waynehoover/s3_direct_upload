@@ -4,14 +4,14 @@ module S3DirectUpload
       uploader = S3Uploader.new(options)
       form_tag(uploader.url, uploader.form_options) do
         uploader.fields.map do |name, value|
-          hidden_field_tag(name, value)
+          hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
         end.join.html_safe + capture(&block)
       end
     end
 
     def s3_uploader_hidden_fields(options = {}, &block)
       uploader = S3Uploader.new(options)
-      {:utf8 => ""}.merge(uploader.fields).map do |name, value|
+      (uploader.fields).map do |name, value|
         hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
       end.join.html_safe
     end
@@ -98,7 +98,6 @@ module S3DirectUpload
         {
           expiration: @options[:expiration],
           conditions: [
-            ["starts-with", "$utf8", ""],
             ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
