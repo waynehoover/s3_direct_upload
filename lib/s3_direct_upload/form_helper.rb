@@ -4,9 +4,21 @@ module S3DirectUpload
       uploader = S3Uploader.new(options)
       form_tag(uploader.url, uploader.form_options) do
         uploader.fields.map do |name, value|
-          hidden_field_tag(name, value)
+          hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
         end.join.html_safe + capture(&block)
       end
+    end
+
+    def s3_uploader_hidden_fields(options = {}, &block)
+      uploader = S3Uploader.new(options)
+      (uploader.fields).map do |name, value|
+        hidden_field_tag(name, value, :class => "s3upload_hidden_fields")
+      end.join.html_safe
+    end
+
+    def s3_uploader_field(options = {})
+      uploader = S3Uploader.new(options)
+      file_field_tag(:file, uploader.field_options).html_safe
     end
 
     class S3Uploader
@@ -31,16 +43,30 @@ module S3DirectUpload
 
       def form_options
         {
-          id: @options[:id],
-          class: @options[:class],
           method: "post",
           authenticity_token: false,
           multipart: true,
+        }.merge(field_options)
+      end
+
+      def field_options
+        form_data_options.merge(form_preset_options)
+      end
+
+      def form_data_options
+        {
           data: {
-            callback_url: @options[:callback_url],
-            callback_method: @options[:callback_method],
-            callback_param: @options[:callback_param]
+              callback_url: @options[:callback_url],
+              callback_method: @options[:callback_method],
+              callback_param: @options[:callback_param]
           }.reverse_merge(@options[:data] || {})
+        }
+      end
+
+      def form_preset_options
+        {
+          id: @options[:id],
+          class: @options[:class],
         }
       end
 
@@ -72,7 +98,6 @@ module S3DirectUpload
         {
           expiration: @options[:expiration],
           conditions: [
-            ["starts-with", "$utf8", ""],
             ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
