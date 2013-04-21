@@ -58,6 +58,8 @@ Create a new view that uses the form helper `s3_uploader_form`:
 <% end %>
 ```
 
+Note: Its required that the file_field_tag is named 'file'.
+
 Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
 ```coffeescript
 jQuery ->
@@ -226,7 +228,7 @@ end
 ```
 
 Alternately, if you'd prefer for S3 to delete your old uploads automatically, you can do
-so by setting your bucket's 
+so by setting your bucket's
 [Lifecycle Configuration](http://docs.aws.amazon.com/AmazonS3/latest/UG/LifecycleConfiguration.html).
 
 ## Contributing / TODO
