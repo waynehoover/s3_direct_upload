@@ -1,6 +1,6 @@
 namespace :s3_direct_upload do
   desc "Removes old uploads from specified s3 bucket/directory -- Useful when uploads are processed into another directory"
-  task :clean_remote_uploads do
+  task :clean_remote_uploads => :environment do
     require 'thread'
     require 'fog'
 
