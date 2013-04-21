@@ -59,20 +59,18 @@ $.fn.S3Uploader = (options) ->
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
 
-        to = $uploadForm.data('callback-url')
-        if to
+        callback_url = $uploadForm.data('callback-url')
+        if callback_url
           content[$uploadForm.data('callback-param')] = content.url
 
           $.ajax
             type: $uploadForm.data('callback-method')
-            url: to
+            url: callback_url
             data: content
             beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
             complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
             success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
             error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
-
-          # $.post(to, content)
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
@@ -93,7 +91,7 @@ $.fn.S3Uploader = (options) ->
         if "type" of @files[0]
           fileType = @files[0].type
         data.push
-          name: "Content-Type"
+          name: "content-type"
           value: fileType
 
         # substitute upload timestamp and unique_id into key
