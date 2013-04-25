@@ -22,6 +22,7 @@ $.fn.S3Uploader = (options) ->
     remove_failed_progress_bar: false
     progress_bar_target: null
     click_submit_target: null
+    allow_multiple_files: true
 
   $.extend settings, options
 
@@ -42,11 +43,13 @@ $.fn.S3Uploader = (options) ->
         file.unique_id = Math.random().toString(36).substr(2,16)
 
         unless settings.before_add and not settings.before_add(file)
-          current_files.push data
           data.context = $($.trim(tmpl("template-upload", file))) if $('#template-upload').length > 0
           $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           if settings.click_submit_target
-           forms_for_submit.push data
+            if settings.allow_multiple_files
+              forms_for_submit.push data
+            else
+              forms_for_submit = [data]
           else
             data.submit()
 
