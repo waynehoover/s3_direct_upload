@@ -96,9 +96,15 @@ $.fn.S3Uploader = (options) ->
           name: "Content-Type"
           value: fileType
 
+        key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
+
         # substitute upload timestamp and unique_id into key
-        key = data[1].value.replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
         data[1].value = settings.path + key
+
+        # IE9 doesn't have XHR2 hence it can't use formData
+        # replace 'key' field to submit form
+        unless 'FormData' of window
+          $uploadForm.find("input[name='key']").val(settings.path + key)
         data
 
   build_content_object = ($uploadForm, file, result) ->
@@ -120,6 +126,9 @@ $.fn.S3Uploader = (options) ->
 
   #public methods
   @initialize = ->
+    # Save key for IE9 Fix
+    $uploadForm.data("key", $uploadForm.find("input[name='key']").val())
+
     setUploadForm()
     this
 
