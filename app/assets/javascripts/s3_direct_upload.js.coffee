@@ -101,7 +101,7 @@ $.fn.S3Uploader = (options) ->
         # substitute upload timestamp and unique_id into key
         data[1].value = settings.path + key
 
-        # IE9 doesn't have XHR2 hence it can't use formData
+        # IE <= 9 doesn't have XHR2 hence it can't use formData
         # replace 'key' field to submit form
         unless 'FormData' of window
           $uploadForm.find("input[name='key']").val(settings.path + key)
@@ -114,7 +114,7 @@ $.fn.S3Uploader = (options) ->
       content.filepath = $('<a />').attr('href', content.url)[0].pathname
     else # IE <= 9 return a null result object so we use the file object instead
       domain           = $uploadForm.attr('action')
-      content.filepath = settings.path + $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+      content.filepath = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url      = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
     content.filename   = file.name
