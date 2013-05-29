@@ -154,7 +154,7 @@ jQuery ->
 
 Target for progress bar
 
-```ruby
+```html
 <div class= "upload js-progress-bars">
   <div class="progress">
     <div class="bars"> </div>
