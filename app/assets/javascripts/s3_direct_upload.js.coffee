@@ -43,11 +43,12 @@ $.fn.S3Uploader = (options) ->
         file.unique_id = Math.random().toString(36).substr(2,16)
 
         unless settings.before_add and not settings.before_add(file)
+          current_files.push data
           if $('#template-upload').length > 0
-            data.context = $($.trim(tmpl("template-upload", file))) 
+            data.context = $($.trim(tmpl("template-upload", file)))
             $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           else if !setting.allow_multiple_files
-            data.context = settings.progress_bar_target 
+            data.context = settings.progress_bar_target
           if settings.click_submit_target
             if settings.allow_multiple_files
               forms_for_submit.push data
