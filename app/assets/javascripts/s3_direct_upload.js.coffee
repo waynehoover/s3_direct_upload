@@ -116,12 +116,11 @@ $.fn.S3Uploader = (options) ->
 
   build_content_object = ($uploadForm, file, result) ->
     content = {}
-    domain             = $uploadForm.attr('action')
     if result # Use the S3 response to set the URL to avoid character encodings bugs
-      content.filepath = $(result).find("Key").text()
-      pathname         = $('<a />').attr('href', content.filepath)[0].pathname
-      content.url      = domain + pathname
+      content.url      = $(result).find("Location").text()
+      content.filepath = $('<a />').attr('href', content.url)[0].pathname
     else # IE <= 9 return a null result object so we use the file object instead
+      domain           = $uploadForm.attr('action')
       content.filepath = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url      = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
@@ -139,6 +138,10 @@ $.fn.S3Uploader = (options) ->
   build_relativePath = (file) ->
     file.relativePath || (file.webkitRelativePath.split("/")[0..-2].join("/") + "/" if file.webkitRelativePath)
 
+  remove_trailing_slash = (string) ->
+    e = string.replace(/\/$/, "")
+    console.log('trying to remove', e)
+    e
 
   #public methods
   @initialize = ->
