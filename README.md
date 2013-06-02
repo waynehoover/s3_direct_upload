@@ -141,7 +141,7 @@ jQuery ->
     progress_bar_target: $('.js-progress-bars')
     click_submit_target: $('.submit-target')
 ```
-### Example with single file upload bar without script template 
+### Example with single file upload bar without script template
 
 This demonstrates how to use progress_bar_target and allow_multiple_files (only works with false option - single file) to show only one progress bar without script template.
 
@@ -183,13 +183,6 @@ jQuery ->
 ```coffeescript
 $('#myS3Uploader').bind 's3_uploads_start', (e) ->
   alert("Uploads have started")
-```
-
-#### File Added
-`file_added` is fired once a file is added to the que. The original event, jquery_file_upload event, and the file data object from jquery_file_upload are passed.
-```coffeescript
-$('#myS3Uploader').bind 'file_added', (original_event, jquery_file_upload_event, file_data_object) ->
-  alert("A file has been added to the que")
 ```
 
 #### Successfull upload
