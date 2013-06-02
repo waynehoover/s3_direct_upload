@@ -141,6 +141,29 @@ jQuery ->
     progress_bar_target: $('.js-progress-bars')
     click_submit_target: $('.submit-target')
 ```
+### Example with single file upload bar without script template 
+
+This demonstrates how to use progress_bar_target and allow_multiple_files (only works with false option - single file) to show only one progress bar without script template.
+
+```coffeescript
+jQuery ->
+  $("#myS3Uploader").S3Uploader
+    progress_bar_target: $('.js-progress-bars')
+    allow_multiple_files: false
+```
+
+Target for progress bar
+
+```html
+<div class="upload js-progress-bars">
+  <div class="progress">
+    <div class="bars"> </div>
+  </div>
+</div>
+```
+
+
+
 
 ### Public methods
 You can change the settings on your form later on by accessing the jQuery instance:
