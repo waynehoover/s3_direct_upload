@@ -45,7 +45,7 @@ $.fn.S3Uploader = (options) ->
           if $('#template-upload').length > 0
             data.context = $($.trim(tmpl("template-upload", file)))
             $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
-          else if !setting.allow_multiple_files
+          else if !settings.allow_multiple_files
             data.context = settings.progress_bar_target
           if settings.click_submit_target
             if settings.allow_multiple_files
