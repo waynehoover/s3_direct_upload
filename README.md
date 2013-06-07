@@ -12,7 +12,7 @@ Add this line to your application's Gemfile:
 
 Then add a new initalizer with your AWS credentials:
 
-**config/initalizers/s3_direct_upload.rb**
+**config/initializers/s3_direct_upload.rb**
 ```ruby
 S3DirectUpload.config do |c|
   c.access_key_id = ""       # your access key id
