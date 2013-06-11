@@ -104,7 +104,11 @@ $.fn.S3Uploader = (options) ->
         key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
 
         # substitute upload timestamp and unique_id into key
-        data[1].value = settings.path + key
+        key_field = $.grep data, (n) ->
+          n if n.name == "key"
+
+        if key_field.length > 0
+          key_field[0].value = settings.path + key
 
         # IE <= 9 doesn't have XHR2 hence it can't use formData
         # replace 'key' field to submit form
