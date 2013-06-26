@@ -8,7 +8,7 @@ module S3DirectUpload
 
     attr_accessor *ATTRIBUTES
 
-    def aws_access_key_id
+    def self.aws_access_key_id
       if self.access_key_id.blank?
         return AWS.config().credentials()['access_key_id'] if Object.const_defined?('AWS')
       else
@@ -16,7 +16,7 @@ module S3DirectUpload
       end
     end
 
-    def aws_secret_access_key
+    def self.aws_secret_access_key
       if self.secret_access_key.blank?
         return AWS.config().credentials()['secret_access_key'] if Object.const_defined?('AWS')
       else
