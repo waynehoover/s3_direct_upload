@@ -12,11 +12,10 @@ module S3DirectUpload
 
     class S3Uploader
       def initialize(options)
-        debugger
         @key_starts_with = options[:key_starts_with] || "uploads/"
         @options = options.reverse_merge(
-          aws_access_key_id: S3DirectUpload.config.access_key_id || "aaaa", #(AWS.config().credentials()[:access_key_id] if Object.const_defined?('AWS')),
-          aws_secret_access_key: S3DirectUpload.config.secret_access_key || "bbbb",# (AWS.config().credentials()[:aws_secret_access_key] if Object.const_defined?('AWS')),
+          aws_access_key_id: S3DirectUpload.config.access_key_id || (AWS.config().credentials()[:access_key_id] if Object.const_defined?('AWS')),
+          aws_secret_access_key: S3DirectUpload.config.secret_access_key || (AWS.config().credentials()[:aws_secret_access_key] if Object.const_defined?('AWS')),
           bucket: S3DirectUpload.config.bucket,
           region: S3DirectUpload.config.region || "s3",
           url: S3DirectUpload.config.url,
