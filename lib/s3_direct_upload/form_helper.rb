@@ -86,11 +86,10 @@ module S3DirectUpload
       end
 
       def signature
-        debugger
         Base64.encode64(
           OpenSSL::HMAC.digest(
             OpenSSL::Digest::Digest.new('sha1'),
-            @options[:aws_secret_access_key], policy
+            @options[:aws_secret_access_key].blank? ? AWS.config().credentials()[:access_key_id] : @options[:aws_secret_access_key], policy
           )
         ).gsub("\n", "")
       end
