@@ -35,6 +35,7 @@ $.fn.S3Uploader = (options) ->
 
   setUploadForm = ->
     $uploadForm.fileupload
+      dropZone: $uploadForm
 
       add: (e, data) ->
         file = data.files[0]
