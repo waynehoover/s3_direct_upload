@@ -115,18 +115,19 @@ $.fn.S3Uploader = (options) ->
   build_content_object = ($uploadForm, file, result) ->
     content = {}
     if result # Use the S3 response to set the URL to avoid character encodings bugs
-      content.url      = $(result).find("Location").text()
-      content.filepath = $('<a />').attr('href', content.url)[0].pathname
-    else # IE <= 9 return a null result object so we use the file object instead
-      domain           = $uploadForm.attr('action')
-      content.filepath = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
-      content.url      = domain + content.filepath + '/' + encodeURIComponent(file.name)
+      content.url            = $(result).find("Location").text()
+      content.filepath       = $('<a />').attr('href', content.url)[0].pathname
+    else # IE <= 9 retu      rn a null result object so we use the file object instead
+      domain                 = $uploadForm.attr('action')
+      content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
+      content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
-    content.filename   = file.name
-    content.filesize   = file.size if 'size' of file
-    content.filetype   = file.type if 'type' of file
-    content.unique_id  = file.unique_id if 'unique_id' of file
-    content.relativePath = build_relativePath(file) if has_relativePath(file)
+    content.filename         = file.name
+    content.filesize         = file.size if 'size' of file
+    content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
+    content.filetype         = file.type if 'type' of file
+    content.unique_id        = file.unique_id if 'unique_id' of file
+    content.relativePath     = build_relativePath(file) if has_relativePath(file)
     content = $.extend content, settings.additional_data if settings.additional_data
     content
 
