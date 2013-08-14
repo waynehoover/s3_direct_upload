@@ -40,7 +40,7 @@ $.fn.S3Uploader = (options) ->
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
 
-        unless settings.before_add and not settings.before_add(file)
+        unless settings.before_add and not settings.before_add(file, data)
           current_files.push data
           if $('#template-upload').length > 0
             data.context = $($.trim(tmpl("template-upload", file)))
