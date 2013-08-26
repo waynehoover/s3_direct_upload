@@ -237,7 +237,7 @@ rake task.
 
 First, add the fog gem to your `Gemfile` and run `bundle`:
 ```ruby
-  require 'fog'
+  gem 'fog'
 ```
 
 Then, run the rake task to delete uploads older than 2 days:
