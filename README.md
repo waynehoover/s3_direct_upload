@@ -136,6 +136,7 @@ Use the javascript in `s3_direct_upload` as a guide.
 * `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 * `progress_bar_target:` The jQuery selector for the element where you want the progress bars to be appended to. Default is the form element.
 * `click_submit_target:` The jQuery selector for the element you wish to add a click handler to do the submitting instead of submiting on file open.
+* `fileupload_options:` Add any options that you wish to pass directly through to the underlying fileupload jQuery plugin. [View available options](https://github.com/blueimp/jQuery-File-Upload/wiki/Options).
 
 ### Example with all options
 ```coffeescript
@@ -147,6 +148,8 @@ jQuery ->
     before_add: myCallBackFunction() # must return true or false if set
     progress_bar_target: $('.js-progress-bars')
     click_submit_target: $('.submit-target')
+    fileupload_options:
+      limitConcurrentUploads: 5
 ```
 ### Example with single file upload bar without script template
 
