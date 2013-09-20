@@ -41,6 +41,8 @@ $.fn.S3Uploader = (options) ->
         form.files[0].name isnt fileName
       )
       current_files = forms_for_submit
+      progress_bar = settings.progress_bar_target or $uploadForm
+      progress_bar.find("#file-" + removedFile.unique_id).remove()
       removedFile
 
     $.extend $uploadForm, obj
