@@ -34,6 +34,16 @@ $.fn.S3Uploader = (options) ->
       false
 
   setUploadForm = ->
+    obj = removeFile: (fileName) ->
+      removedFile = undefined
+      forms_for_submit = forms_for_submit.filter((form) ->
+        removedFile = form.files[0]  if form.files[0].name is fileName
+        form.files[0].name isnt fileName
+      )
+      current_files = forms_for_submit
+      removedFile
+
+    $.extend $uploadForm, obj
     $uploadForm.fileupload
 
       add: (e, data) ->
