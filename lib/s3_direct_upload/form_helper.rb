@@ -1,6 +1,7 @@
 module S3DirectUpload
   module UploadHelper
     def s3_uploader_form(options = {}, &block)
+      puts options
       uploader = S3Uploader.new(options)
       form_tag(uploader.url, uploader.form_options) do
         uploader.fields.map do |name, value|
@@ -13,15 +14,15 @@ module S3DirectUpload
       def initialize(options)
         @key_starts_with = options[:key_starts_with] || "uploads/"
         @options = options.reverse_merge(
-          aws_access_key_id: S3DirectUpload.config.access_key_id,
-          aws_secret_access_key: S3DirectUpload.config.secret_access_key,
+          aws_access_key_id: S3DirectUpload.config.access_key_id || (AWS.config().credentials()[:access_key_id] if Object.const_defined?('AWS')),
+          aws_secret_access_key: S3DirectUpload.config.secret_access_key || (AWS.config().credentials()[:aws_secret_access_key] if Object.const_defined?('AWS')),
           bucket: S3DirectUpload.config.bucket,
           region: S3DirectUpload.config.region || "s3",
           url: S3DirectUpload.config.url,
           ssl: true,
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
-          max_file_size: 500.megabytes,
+          max_file_size: 5.megabytes,
           callback_method: "POST",
           callback_param: "file",
           key_starts_with: @key_starts_with,
@@ -88,7 +89,7 @@ module S3DirectUpload
         Base64.encode64(
           OpenSSL::HMAC.digest(
             OpenSSL::Digest::Digest.new('sha1'),
-            @options[:aws_secret_access_key], policy
+            @options[:aws_secret_access_key].blank? ? AWS.config().credentials()[:access_key_id] : @options[:aws_secret_access_key], policy
           )
         ).gsub("\n", "")
       end
