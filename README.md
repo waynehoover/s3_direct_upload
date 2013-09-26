@@ -144,7 +144,7 @@ jQuery ->
     path: 'path/to/my/files/on/s3'
     additional_data: {key: 'value'}
     remove_completed_progress_bar: false
-    before_add: myCallBackFunction() # must return true or false if set
+    before_add: myCallBackFunction # must return true or false if set
     progress_bar_target: $('.js-progress-bars')
     click_submit_target: $('.submit-target')
 ```
