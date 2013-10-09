@@ -261,6 +261,15 @@ Alternately, if you'd prefer for S3 to delete your old uploads automatically, yo
 so by setting your bucket's
 [Lifecycle Configuration](http://docs.aws.amazon.com/AmazonS3/latest/UG/LifecycleConfiguration.html).
 
+## A note on IE support
+IE file uploads are working but with a couple caveats.
+
+* The before_add callback doesn't work.
+* The progress bar doesn't work on IE.
+
+But IE should still upload your files fine.
+
+
 ## Contributing / TODO
 This is just a simple gem that only really provides some javascript and a form helper.
 This gem could go all sorts of ways based on what people want and how people contribute.
