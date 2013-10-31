@@ -28,6 +28,13 @@ describe S3DirectUpload::UploadHelper::S3Uploader do
         s3_uploader.policy_data[:conditions].should include ["starts-with", "$content-type", ""]
       end
     end
+
+    describe "starts-with $x-amz-security-token" do
+      it "is defaults to an empty string" do
+        s3_uploader = S3DirectUpload::UploadHelper::S3Uploader.new({})
+        s3_uploader.policy_data[:conditions].should include ["starts-with", "$x-amz-security-token", ""]
+      end
+    end
   end
 
 end

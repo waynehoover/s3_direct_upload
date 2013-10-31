@@ -4,7 +4,7 @@ module S3DirectUpload
   class Config
     include Singleton
 
-    ATTRIBUTES = [:access_key_id, :secret_access_key, :bucket, :prefix_to_clean, :region, :url]
+    ATTRIBUTES = [:access_key_id, :secret_access_key, :session_token, :bucket, :prefix_to_clean, :region, :url]
 
     attr_accessor *ATTRIBUTES
   end
