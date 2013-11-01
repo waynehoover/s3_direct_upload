@@ -47,7 +47,7 @@ $.fn.S3Uploader = (options) ->
 
     $.extend $uploadForm, obj
     $uploadForm.fileupload
-
+      singleFileUploads: false
       add: (e, data) ->
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
@@ -113,8 +113,7 @@ $.fn.S3Uploader = (options) ->
           name: "content-type"
           value: fileType
 
-        key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
-
+        key = $uploadForm.find("input[id=key]").val().replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
         # substitute upload timestamp and unique_id into key
         key_field = $.grep data, (n) ->
           n if n.name == "key"
@@ -168,3 +167,4 @@ $.fn.S3Uploader = (options) ->
     settings.additional_data = new_data
 
   @initialize()
+
