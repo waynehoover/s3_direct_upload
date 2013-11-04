@@ -112,8 +112,7 @@ $.fn.S3Uploader = (options) ->
         data.push
           name: "content-type"
           value: fileType
-
-        key = $uploadForm.find("input[id=key]").val().replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
+        key = $uploadForm.find("input[id=key]").val().replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id).replace('${filename}', this.context.find('div.filename').html())
         # substitute upload timestamp and unique_id into key
         key_field = $.grep data, (n) ->
           n if n.name == "key"
@@ -167,4 +166,5 @@ $.fn.S3Uploader = (options) ->
     settings.additional_data = new_data
 
   @initialize()
+
 
