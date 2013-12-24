@@ -5,3 +5,5 @@ gemspec
 gem 'rspec'
 gem 'jquery-fileupload-rails'
 gem 'activesupport'
+gem 'rake'
+
