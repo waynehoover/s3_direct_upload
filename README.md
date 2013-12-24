@@ -1,5 +1,7 @@
 # S3DirectUpload
 
+[![Build Status](https://travis-ci.org/waynehoover/s3_direct_upload?branch=master)](https://travis-ci.org/waynehoover/s3_direct_upload)
+
 Easily generate a form that allows you to upload directly to Amazon S3.
 Multi file uploading supported by jquery-fileupload.
 
