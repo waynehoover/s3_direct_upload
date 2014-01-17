@@ -89,6 +89,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `id:` Optional html id for the form, its recommended that you give the form an id so you can reference with the jQuery plugin.
 * `class:` Optional html class for the form.
 * `data:` Optional html data attribute hash.
+* `bucket:` Optional (defaults to bucket used in config).
 
 ### Example with all options
 ```ruby
