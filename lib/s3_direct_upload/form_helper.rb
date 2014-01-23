@@ -39,7 +39,8 @@ module S3DirectUpload
           data: {
             callback_url: @options[:callback_url],
             callback_method: @options[:callback_method],
-            callback_param: @options[:callback_param]
+            callback_param: @options[:callback_param],
+            key_starts_with: @options[:key_starts_with]
           }.reverse_merge(@options[:data] || {})
         }
       end

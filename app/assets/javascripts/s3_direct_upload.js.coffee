@@ -112,7 +112,9 @@ $.fn.S3Uploader = (options) ->
         data.push
           name: "content-type"
           value: fileType
-        key = $uploadForm.find("input[id=key]").val().replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id).replace('${filename}', this.context.find('div.filename').html())
+
+        key_starts_with = $uploadForm.data('key-starts-with')
+        key = key_starts_with+new Date().getTime()+"-"+@files[0].unique_id+"-"+Math.random().toString(36).substr(2,16)+"/"+this.context.find('div.filename').html()
         # substitute upload timestamp and unique_id into key
         key_field = $.grep data, (n) ->
           n if n.name == "key"
@@ -120,10 +122,12 @@ $.fn.S3Uploader = (options) ->
         if key_field.length > 0
           key_field[0].value = settings.path + key
 
+  
+        $uploadForm.find("input[name='key']").val(settings.path + key)
         # IE <= 9 doesn't have XHR2 hence it can't use formData
         # replace 'key' field to submit form
-        unless 'FormData' of window
-          $uploadForm.find("input[name='key']").val(settings.path + key)
+        # unless 'FormData' of window
+        #   $uploadForm.find("input[name='key']").val(settings.path + key)
         data
 
   build_content_object = ($uploadForm, file, result) ->
@@ -168,5 +172,7 @@ $.fn.S3Uploader = (options) ->
     settings.additional_data = new_data
 
   @initialize()
+
+
 
 
