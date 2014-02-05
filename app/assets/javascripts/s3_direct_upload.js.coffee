@@ -34,13 +34,25 @@ $.fn.S3Uploader = (options) ->
       false
 
   setUploadForm = ->
-    $uploadForm.fileupload
+    obj = removeFile: (fileName) ->
+      removedFile = undefined
+      forms_for_submit = forms_for_submit.filter((form) ->
+        removedFile = form.files[0]  if form.files[0].name is fileName
+        form.files[0].name isnt fileName
+      )
+      current_files = forms_for_submit
+      progress_bar = settings.progress_bar_target or $uploadForm
+      progress_bar.find("#file-" + removedFile.unique_id).remove()
+      removedFile
 
+    $.extend $uploadForm, obj
+    $uploadForm.fileupload
+      singleFileUploads: false
       add: (e, data) ->
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
 
-        unless settings.before_add and not settings.before_add(file)
+        unless settings.before_add and not settings.before_add(file, data)
           current_files.push data
           if $('#template-upload').length > 0
             data.context = $($.trim(tmpl("template-upload", file)))
@@ -65,7 +77,7 @@ $.fn.S3Uploader = (options) ->
 
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
-
+        forms_for_submit = []
         callback_url = $uploadForm.data('callback-url')
         if callback_url
           content[$uploadForm.data('callback-param')] = content.url
@@ -101,8 +113,8 @@ $.fn.S3Uploader = (options) ->
           name: "content-type"
           value: fileType
 
-        key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
-
+        key_starts_with = $uploadForm.data('key-starts-with')
+        key = key_starts_with+new Date().getTime()+"-"+@files[0].unique_id+"-"+Math.random().toString(36).substr(2,16)+"/"+this.context.find('div.filename').html()
         # substitute upload timestamp and unique_id into key
         key_field = $.grep data, (n) ->
           n if n.name == "key"
@@ -110,10 +122,12 @@ $.fn.S3Uploader = (options) ->
         if key_field.length > 0
           key_field[0].value = settings.path + key
 
+  
+        $uploadForm.find("input[name='key']").val(settings.path + key)
         # IE <= 9 doesn't have XHR2 hence it can't use formData
         # replace 'key' field to submit form
-        unless 'FormData' of window
-          $uploadForm.find("input[name='key']").val(settings.path + key)
+        # unless 'FormData' of window
+        #   $uploadForm.find("input[name='key']").val(settings.path + key)
         data
 
   build_content_object = ($uploadForm, file, result) ->
@@ -121,12 +135,14 @@ $.fn.S3Uploader = (options) ->
     if result # Use the S3 response to set the URL to avoid character encodings bugs
       content.url            = $(result).find("Location").text()
       content.filepath       = $('<a />').attr('href', content.url)[0].pathname
+      content.filename       = $(result).find('Key').text().split("/").pop()
     else # IE <= 9 retu      rn a null result object so we use the file object instead
       domain                 = $uploadForm.attr('action')
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
+      content.filename       = content.filepath.split("/").pop()
 
-    content.filename         = file.name
+
     content.filesize         = file.size if 'size' of file
     content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
     content.filetype         = file.type if 'type' of file
@@ -156,3 +172,7 @@ $.fn.S3Uploader = (options) ->
     settings.additional_data = new_data
 
   @initialize()
+
+
+
+
