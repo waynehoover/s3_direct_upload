@@ -23,6 +23,7 @@ $.fn.S3Uploader = (options) ->
     progress_bar_target: null
     click_submit_target: null
     allow_multiple_files: true
+    fileupload_options: null
 
   $.extend settings, options
 
@@ -33,88 +34,90 @@ $.fn.S3Uploader = (options) ->
       form.submit() for form in forms_for_submit
       false
 
-  setUploadForm = ->
-    $uploadForm.fileupload
+  api =
+    add: (e, data) ->
+      file = data.files[0]
+      file.unique_id = Math.random().toString(36).substr(2,16)
 
-      add: (e, data) ->
-        file = data.files[0]
-        file.unique_id = Math.random().toString(36).substr(2,16)
-
-        unless settings.before_add and not settings.before_add(file)
-          current_files.push data
-          if $('#template-upload').length > 0
-            data.context = $($.trim(tmpl("template-upload", file)))
-            $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
-          else if !settings.allow_multiple_files
-            data.context = settings.progress_bar_target
-          if settings.click_submit_target
-            if settings.allow_multiple_files
-              forms_for_submit.push data
-            else
-              forms_for_submit = [data]
+      unless settings.before_add and not settings.before_add(file)
+        current_files.push data
+        if $('#template-upload').length > 0
+          data.context = $($.trim(tmpl("template-upload", file)))
+          $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
+        else if !settings.allow_multiple_files
+          data.context = settings.progress_bar_target
+        if settings.click_submit_target
+          if settings.allow_multiple_files
+            forms_for_submit.push data
           else
-            data.submit()
+            forms_for_submit = [data]
+        else
+          data.submit()
 
-      start: (e) ->
-        $uploadForm.trigger("s3_uploads_start", [e])
+    start: (e) ->
+      $uploadForm.trigger("s3_uploads_start", [e])
 
-      progress: (e, data) ->
-        if data.context
-          progress = parseInt(data.loaded / data.total * 100, 10)
-          data.context.find('.bar').css('width', progress + '%')
+    progress: (e, data) ->
+      if data.context
+        progress = parseInt(data.loaded / data.total * 100, 10)
+        data.context.find('.bar').css('width', progress + '%')
 
-      done: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
+    done: (e, data) ->
+      content = build_content_object $uploadForm, data.files[0], data.result
 
-        callback_url = $uploadForm.data('callback-url')
-        if callback_url
-          content[$uploadForm.data('callback-param')] = content.url
+      callback_url = $uploadForm.data('callback-url')
+      if callback_url
+        content[$uploadForm.data('callback-param')] = content.url
 
-          $.ajax
-            type: $uploadForm.data('callback-method')
-            url: callback_url
-            data: content
-            beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
-            complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
-            success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
-            error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
+        $.ajax
+          type: $uploadForm.data('callback-method')
+          url: callback_url
+          data: content
+          beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
+          complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
+          success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
+          error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
 
-        data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_complete", [content])
+      data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
+      $uploadForm.trigger("s3_upload_complete", [content])
 
-        current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
-        $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
+      current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
+      $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
 
-      fail: (e, data) ->
-        content = build_content_object $uploadForm, data.files[0], data.result
-        content.error_thrown = data.errorThrown
+    fail: (e, data) ->
+      content = build_content_object $uploadForm, data.files[0], data.result
+      content.error_thrown = data.errorThrown
 
-        data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_failed", [content])
+      data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
+      $uploadForm.trigger("s3_upload_failed", [content])
 
-      formData: (form) ->
-        data = form.serializeArray()
-        fileType = ""
-        if "type" of @files[0]
-          fileType = @files[0].type
-        data.push
-          name: "content-type"
-          value: fileType
+    formData: (form) ->
+      data = form.serializeArray()
+      fileType = ""
+      if "type" of @files[0]
+        fileType = @files[0].type
+      data.push
+        name: "content-type"
+        value: fileType
 
-        key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
+      key = $uploadForm.data("key").replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
 
-        # substitute upload timestamp and unique_id into key
-        key_field = $.grep data, (n) ->
-          n if n.name == "key"
+      # substitute upload timestamp and unique_id into key
+      key_field = $.grep data, (n) ->
+        n if n.name == "key"
 
-        if key_field.length > 0
-          key_field[0].value = settings.path + key
+      if key_field.length > 0
+        key_field[0].value = settings.path + key
 
-        # IE <= 9 doesn't have XHR2 hence it can't use formData
-        # replace 'key' field to submit form
-        unless 'FormData' of window
-          $uploadForm.find("input[name='key']").val(settings.path + key)
-        data
+      # IE <= 9 doesn't have XHR2 hence it can't use formData
+      # replace 'key' field to submit form
+      unless 'FormData' of window
+        $uploadForm.find("input[name='key']").val(settings.path + key)
+      data
+
+  setUploadForm = ->
+    fileupload_options = $.extend api, settings.fileupload_options
+    $uploadForm.fileupload fileupload_options
 
   build_content_object = ($uploadForm, file, result) ->
     content = {}
