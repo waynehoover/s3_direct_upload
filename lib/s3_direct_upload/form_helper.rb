@@ -15,7 +15,7 @@ module S3DirectUpload
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
-          bucket: S3DirectUpload.config.bucket,
+          bucket: options[:bucket] || S3DirectUpload.config.bucket,
           region: S3DirectUpload.config.region || "s3",
           url: S3DirectUpload.config.url,
           ssl: true,
