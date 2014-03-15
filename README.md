@@ -55,7 +55,7 @@ Add the following js and css to your asset pipeline:
 ## Usage
 Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
-<%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
+<%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "myS3Uploader" do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
 ```
@@ -65,7 +65,7 @@ Note: Its required that the file_field_tag is named 'file'.
 Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
 ```coffeescript
 jQuery ->
-  $("#s3-uploader").S3Uploader()
+  $("#myS3Uploader").S3Uploader()
 ```
 
 Optionally, you can also place this template in the same view for the progress bars:
@@ -100,7 +100,7 @@ Optionally, you can also place this template in the same view for the progress b
                      key_starts_with: "files/", 
                      acl: "public-read", 
                      max_file_size: 50.megabytes, 
-                     id: "s3-uploader", 
+                     id: "myS3Uploader", 
                      class: "upload-form", 
                      data: {:key => :val} do %>
   <%= file_field_tag :file, multiple: true %>
