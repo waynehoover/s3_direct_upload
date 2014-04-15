@@ -74,10 +74,22 @@ $.fn.S3Uploader = (options) ->
             type: $uploadForm.data('callback-method')
             url: callback_url
             data: content
-            beforeSend: ( xhr, settings )       -> $uploadForm.trigger( 'ajax:beforeSend', [xhr, settings] )
-            complete:   ( xhr, status )         -> $uploadForm.trigger( 'ajax:complete', [xhr, status] )
-            success:    ( data, status, xhr )   -> $uploadForm.trigger( 'ajax:success', [data, status, xhr] )
-            error:      ( xhr, status, error )  -> $uploadForm.trigger( 'ajax:error', [xhr, status, error] )
+            beforeSend: ( xhr, settings )       ->
+              event = $.Event('ajax:beforeSend')
+              $uploadForm.trigger(event, [xhr, settings])
+              return event.result
+            complete:   ( xhr, status )         ->
+              event = $.Event('ajax:complete')
+              $uploadForm.trigger(event, [xhr, status])
+              return event.result
+            success:    ( data, status, xhr )   ->
+              event = $.Event('ajax:success')
+              $uploadForm.trigger(event, [data, status, xhr])
+              return event.result
+            error:      ( xhr, status, error )  ->
+              event = $.Event('ajax:error')
+              $uploadForm.trigger(event, [xhr, status, error])
+              return event.result
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_complete", [content])
