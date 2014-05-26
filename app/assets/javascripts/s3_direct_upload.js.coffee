@@ -25,7 +25,7 @@ $.fn.S3Uploader = (options) ->
     allow_multiple_files: true
     progress_bar_orientation: 'width'
     progress_bar_invert_count: false # inverts the progress count e.g. (100% = 0%)
-    progress_bar_invert_element: '.bar'
+    progress_bar_element: '.bar'
 
   $.extend settings, options
 
@@ -67,7 +67,7 @@ $.fn.S3Uploader = (options) ->
             progress = parseInt(100 - (data.loaded / data.total * 100), 10)
           else
             progress = parseInt(data.loaded / data.total * 100, 10)
-          data.context.find(settings.progress_bar_invert_element).css(settings.progress_bar_orientation, progress + '%')
+          data.context.find(settings.progress_bar_element).css(settings.progress_bar_orientation, progress + '%')
 
       done: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
