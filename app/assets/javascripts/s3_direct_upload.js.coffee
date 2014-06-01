@@ -37,6 +37,8 @@ $.fn.S3Uploader = (options) ->
     $uploadForm.fileupload
 
       add: (e, data) ->
+        return unless $uploadForm.is(e.originalEvent.target.form)
+
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
 
