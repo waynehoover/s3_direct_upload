@@ -54,7 +54,7 @@ Add the following js and css to your asset pipeline:
 
 ## Usage
 Create a new view that uses the form helper `s3_uploader_form`:
-```ruby
+```erb
 <%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
@@ -92,7 +92,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `bucket:` Optional (defaults to bucket used in config).
 
 ### Example with all options
-```ruby
+```erb
 <%= s3_uploader_form callback_url: model_url, 
                      callback_method: "POST", 
                      callback_param: "model[image_url]", 
@@ -114,7 +114,7 @@ One way to do this is to make sure you have `resources model` in your routes fil
 
 You could then have your create action render a javascript file like this:
 **create.js.erb**
-```ruby
+```erb
 <% if @model.new_record? %>
   alert("Failed to upload model: <%= j @model.errors.full_messages.join(', ').html_safe %>");
 <% else %>
@@ -230,7 +230,7 @@ $('#myS3Uploader').bind "s3_upload_failed", (e, content) ->
 When all uploads finish in a batch an `s3_uploads_complete` event will be triggered on `document`, so you could do something like:
 ```coffeescript
 $(document).bind 's3_uploads_complete', ->
-    alert("All Uploads completed")
+  alert("All Uploads completed")
 ```
 
 #### Rails AJAX Callbacks
@@ -249,15 +249,15 @@ rake task.
 
 First, add the fog gem to your `Gemfile` and run `bundle`:
 ```ruby
-  gem 'fog'
+gem 'fog'
 ```
 
 Then, run the rake task to delete uploads older than 2 days:
 ```
-  $ rake s3_direct_upload:clean_remote_uploads
-  Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/06 - PCR_RYA014-25.jpg"
-  Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/05 - PCR_RYA014-24.jpg"
-  $
+$ rake s3_direct_upload:clean_remote_uploads
+Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/06 - PCR_RYA014-25.jpg"
+Deleted file with key: "uploads/20121210T2139Z_03846cb0329b6a8eba481ec689135701/05 - PCR_RYA014-24.jpg"
+$
 ```
 
 Optionally customize the prefix used for cleaning (default is `uploads/#{2.days.ago.strftime('%Y%m%d')}`):
