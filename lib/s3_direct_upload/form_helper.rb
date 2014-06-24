@@ -64,7 +64,6 @@ module S3DirectUpload
           'X-Amz-Credential' => "#{@options[:aws_access_key_id]}/#{@options[:date]}/#{@options[:region]}/s3/aws4_request",
           'X-Amz-Date' => @options[:timestamp],
           'X-Amz-Signature' => signature,
-          'X-Amz-Expires' => 8600,
           'X-Requested-With' => 'xhr'
         }
       end
@@ -102,7 +101,7 @@ module S3DirectUpload
 
       def signing_key
         #AWS Signature Version 4
-        kDate    = OpenSSL::HMAC.digest('sha256', "AWS" + @options[:aws_secret_access_key], @options[:date])
+        kDate    = OpenSSL::HMAC.digest('sha256', "AWS4" + @options[:aws_secret_access_key], @options[:date])
         kRegion  = OpenSSL::HMAC.digest('sha256', kDate, @options[:region])
         kService = OpenSSL::HMAC.digest('sha256', kRegion, 's3')
         kSigning = OpenSSL::HMAC.digest('sha256', kService, "aws4_request")
