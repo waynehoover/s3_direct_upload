@@ -23,6 +23,7 @@ $.fn.S3Uploader = (options) ->
     progress_bar_target: null
     click_submit_target: null
     allow_multiple_files: true
+    prepend_files: null
 
   $.extend settings, options
 
@@ -44,7 +45,10 @@ $.fn.S3Uploader = (options) ->
           current_files.push data
           if $('#template-upload').length > 0
             data.context = $($.trim(tmpl("template-upload", file)))
-            $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
+            if settings.prepend_files
+              $(data.context).prependTo(settings.progress_bar_target || $uploadForm)
+            else
+              $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           else if !settings.allow_multiple_files
             data.context = settings.progress_bar_target
           if settings.click_submit_target
