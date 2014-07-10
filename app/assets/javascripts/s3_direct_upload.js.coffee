@@ -170,4 +170,7 @@ $.fn.S3Uploader = (options) ->
   @additional_data = (new_data) ->
     settings.additional_data = new_data
 
+  @get_additional_data = () ->
+    settings.additional_data
+
   @initialize()
