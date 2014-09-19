@@ -16,7 +16,7 @@ module S3DirectUpload
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: options[:bucket] || S3DirectUpload.config.bucket,
-          region: S3DirectUpload.config.region || "s3",
+          region: S3DirectUpload.config.region || "us-east-1",
           url: S3DirectUpload.config.url,
           ssl: true,
           acl: "public-read",
@@ -25,8 +25,18 @@ module S3DirectUpload
           callback_method: "POST",
           callback_param: "file",
           key_starts_with: @key_starts_with,
-          key: key
+          key: key,
+          date: Time.now.utc.strftime("%Y%m%d"),
+          timestamp: Time.now.utc.strftime("%Y%m%dT%H%M%SZ")
         )
+      end
+
+      def hostname
+        if @options[:region] == "us-east-1"
+          "#{@options[:bucket]}.s3.amazonaws.com"
+        else
+          "#{@options[:bucket]}.s3-#{@options[:region]}.amazonaws.com"
+        end
       end
 
       def form_options
@@ -46,12 +56,14 @@ module S3DirectUpload
 
       def fields
         {
-          :key => @options[:key] || key,
           :acl => @options[:acl],
-          "AWSAccessKeyId" => @options[:aws_access_key_id],
+          :key => @options[:key] || key,
           :policy => policy,
-          :signature => signature,
           :success_action_status => "201",
+          'X-Amz-Algorithm' => 'AWS4-HMAC-SHA256',
+          'X-Amz-Credential' => "#{@options[:aws_access_key_id]}/#{@options[:date]}/#{@options[:region]}/s3/aws4_request",
+          'X-Amz-Date' => @options[:timestamp],
+          'X-Amz-Signature' => signature,
           'X-Requested-With' => 'xhr'
         }
       end
@@ -61,7 +73,7 @@ module S3DirectUpload
       end
 
       def url
-        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{@options[:region]}.amazonaws.com/#{@options[:bucket]}/"
+        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{hostname}/"
       end
 
       def policy
@@ -79,18 +91,26 @@ module S3DirectUpload
             ["starts-with","$content-type", @options[:content_type_starts_with] ||""],
             {bucket: @options[:bucket]},
             {acl: @options[:acl]},
-            {success_action_status: "201"}
+            {success_action_status: "201"},
+            {'X-Amz-Algorithm' => 'AWS4-HMAC-SHA256'},
+            {'X-Amz-Credential' => "#{@options[:aws_access_key_id]}/#{@options[:date]}/#{@options[:region]}/s3/aws4_request"},
+            {'X-Amz-Date' => @options[:timestamp]}
           ] + (@options[:conditions] || [])
         }
       end
 
+      def signing_key
+        #AWS Signature Version 4
+        kDate    = OpenSSL::HMAC.digest('sha256', "AWS4" + @options[:aws_secret_access_key], @options[:date])
+        kRegion  = OpenSSL::HMAC.digest('sha256', kDate, @options[:region])
+        kService = OpenSSL::HMAC.digest('sha256', kRegion, 's3')
+        kSigning = OpenSSL::HMAC.digest('sha256', kService, "aws4_request")
+
+        kSigning
+      end
+
       def signature
-        Base64.encode64(
-          OpenSSL::HMAC.digest(
-            OpenSSL::Digest.new('sha1'),
-            @options[:aws_secret_access_key], policy
-          )
-        ).gsub("\n", "")
+        OpenSSL::HMAC.hexdigest('sha256', signing_key, policy)
       end
     end
   end
