@@ -36,7 +36,12 @@ $.fn.S3Uploader = (options) ->
   setUploadForm = ->
     $uploadForm.fileupload
 
-      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      before_add: (file) ->
+        regex = /(\.|\/)(gif|jpe?g|png)$/i;
+        if regex.test(file.name) == false
+          return false
+
+        return true
 
       add: (e, data) ->
         file = data.files[0]
