@@ -1,4 +1,5 @@
 #= require jquery-fileupload/basic
+#= require jquery-fileupload/validate
 #= require jquery-fileupload/vendor/tmpl
 
 $ = jQuery
