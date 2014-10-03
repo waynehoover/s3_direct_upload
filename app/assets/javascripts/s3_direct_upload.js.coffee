@@ -139,9 +139,9 @@ $.fn.S3Uploader = (options) ->
     else # IE <= 9 retu      rn a null result object so we use the file object instead
       domain                 = $uploadForm.attr('action')
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
-      content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name.gsub(/([\[\]])/, ''))
+      content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name.replace(/([\[\]])/g, ''))
 
-    content.filename         = file.name.gsub(/([\[\]])/, '')
+    content.filename         = file.name.replace(/([\[\]])/g, '')
     content.filesize         = file.size if 'size' of file
     content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
     content.filetype         = file.type if 'type' of file
