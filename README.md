@@ -84,7 +84,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `callback_url:` No default. The url that is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
 * `callback_method:` Defaults to `POST`. Use PUT and remove the multiple option from your file field to update a model.
 * `callback_param:` Defaults to `file`. Parameter key for the POST to `callback_url` the value will be the full s3 url of the file. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
-* `key:` Defaults to `uploads/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}`. It is the key, or filename used on s3. `{timestamp}` and `{unique_id}` are special substitution strings that will be populated by javascript with values for the current upload. `${filename}` is a special s3 string that will be populated with the original uploaded file name. Needs to be at least `"${filename}"`. It is highly recommended to use both `{unique_id}`, which will prevent collisions when uploading files with the same name (such as from a mobile device, where every photo is named image.jpg), and a server-generated random value such as `#{SecureRandom.hex}`, which adds further collision protection with other uploaders.
+* `key:` Defaults to `uploads/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}`. It is the key, or filename used on s3. `{timestamp}`, `{unique_id}`, `{extension}` and `{cleaned_filename}` are special substitution strings that will be populated by javascript with values for the current upload. {cleaned_filename} is the original filename with special characters removed. `${filename}` is a special s3 string that will be populated with the original uploaded file name. Needs to be at least `"${filename}"`. It is highly recommended to use both `{unique_id}`, which will prevent collisions when uploading files with the same name (such as from a mobile device, where every photo is named image.jpg), and a server-generated random value such as `#{SecureRandom.hex}`, which adds further collision protection with other uploaders.
 * `key_starts_with:` Defaults to `uploads/`. Constraint on the key on s3.  if you change the `key` option, make sure this starts with what you put there. If you set this as a blank string the upload path to s3 can be anything - not recommended!
 * `acl:` Defaults to `public-read`. The AWS acl for files uploaded to s3.
 * `max_file_size:` Defaults to `500.megabytes`. Maximum file size allowed.
@@ -95,15 +95,15 @@ Optionally, you can also place this template in the same view for the progress b
 
 ### Example with all options
 ```ruby
-<%= s3_uploader_form callback_url: model_url, 
-                     callback_method: "POST", 
-                     callback_param: "model[image_url]", 
-                     key: "files/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}", 
-                     key_starts_with: "files/", 
-                     acl: "public-read", 
-                     max_file_size: 50.megabytes, 
-                     id: "s3-uploader", 
-                     class: "upload-form", 
+<%= s3_uploader_form callback_url: model_url,
+                     callback_method: "POST",
+                     callback_param: "model[image_url]",
+                     key: "files/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}",
+                     key_starts_with: "files/",
+                     acl: "public-read",
+                     max_file_size: 50.megabytes,
+                     id: "s3-uploader",
+                     class: "upload-form",
                      data: {:key => :val} do %>
   <%= file_field_tag :file, multiple: true %>
 <% end %>
