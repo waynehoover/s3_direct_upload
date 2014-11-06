@@ -2,7 +2,7 @@ module S3DirectUpload
   module UploadHelper
     def s3_uploader_form(options = {}, &block)
       uploader = S3Uploader.new(options)
-      form_tag(uploader.url, uploader.form_options) do
+      content_tag(:div, uploader.form_options.merge(action: uploader.url)) do
         uploader.fields.map do |name, value|
           hidden_field_tag(name, value)
         end.join.html_safe + capture(&block)

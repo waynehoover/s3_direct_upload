@@ -34,7 +34,7 @@ $.fn.S3Uploader = (options) ->
       false
 
   setUploadForm = ->
-    $uploadForm.fileupload
+    $uploadForm.find("input[type='file']").fileupload
 
       add: (e, data) ->
         file = data.files[0]
@@ -105,7 +105,7 @@ $.fn.S3Uploader = (options) ->
         $uploadForm.trigger("s3_upload_failed", [content])
 
       formData: (form) ->
-        data = form.serializeArray()
+        data = $uploadForm.find("input").serializeArray()
         fileType = ""
         if "type" of @files[0]
           fileType = @files[0].type
