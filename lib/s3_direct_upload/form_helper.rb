@@ -11,7 +11,7 @@ module S3DirectUpload
 
     class S3Uploader
       def initialize(options)
-        @key_starts_with = options[:key_starts_with] || "uploads/"
+        @key_starts_with = options[:key_starts_with] || "uploads/#{2.days.ago.strftime('%Y%m%d')}"
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
