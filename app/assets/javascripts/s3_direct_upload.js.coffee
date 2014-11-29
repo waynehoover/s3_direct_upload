@@ -33,6 +33,12 @@ $.fn.S3Uploader = (options) ->
       form.submit() for form in forms_for_submit
       false
 
+  $wrapping_form = $uploadForm.closest('form')
+  if $wrapping_form.length > 0
+    $wrapping_form.off('submit').on 'submit', ->
+      $wrapping_form.find('.s3_uploader input').prop "disabled", true
+      true
+
   setUploadForm = ->
     $uploadForm.find("input[type='file']").fileupload
 
@@ -138,7 +144,7 @@ $.fn.S3Uploader = (options) ->
       content.url            = $(result).find("Location").text()
       content.filepath       = $('<a />').attr('href', content.url)[0].pathname
     else # IE <= 9 retu      rn a null result object so we use the file object instead
-      domain                 = $uploadForm.attr('action')
+      domain                 = $uploadForm.find('input[type=file]').data('url')
       key                    = $uploadForm.find('input[name=key]').val()
       content.filepath       = key.replace('/${filename}', '').replace('/{cleaned_filename}', '')
       content.url            = domain + key.replace('/${filename}', encodeURIComponent(file.name))
