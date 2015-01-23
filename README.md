@@ -160,6 +160,7 @@ jQuery ->
     remove_completed_progress_bar: false
     before_add: myCallBackFunction # must return true or false if set
     progress_bar_target: $('.js-progress-bars')
+    dropzone_target: $('.upload')
     click_submit_target: $('.submit-target')
 ```
 ### Example with single file upload bar without script template
