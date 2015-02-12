@@ -61,7 +61,7 @@ module S3DirectUpload
       end
 
       def url
-        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{@options[:region]}.amazonaws.com/#{@options[:bucket]}/"
+        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{@options[:bucket]}.#{@options[:region]}.amazonaws.com/"
       end
 
       def policy
