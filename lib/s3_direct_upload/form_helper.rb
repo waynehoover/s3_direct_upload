@@ -69,18 +69,23 @@ module S3DirectUpload
       end
 
       def policy_data
+        conditions = [
+          ["starts-with", "$utf8", ""],
+          ["starts-with", "$key", @options[:key_starts_with]],
+          ["starts-with", "$x-requested-with", ""],
+          ["content-length-range", 0, @options[:max_file_size]],
+          {bucket: @options[:bucket]},
+          {acl: @options[:acl]},
+          {success_action_status: "201"}
+        ] + (@options[:conditions] || [])
+
+        if @options[:content_type_starts_with]
+          conditions.push(["starts-with","$content-type", @options[:content_type_starts_with]])
+        end
+
         {
           expiration: @options[:expiration],
-          conditions: [
-            ["starts-with", "$utf8", ""],
-            ["starts-with", "$key", @options[:key_starts_with]],
-            ["starts-with", "$x-requested-with", ""],
-            ["content-length-range", 0, @options[:max_file_size]],
-            ["starts-with","$content-type", @options[:content_type_starts_with] ||""],
-            {bucket: @options[:bucket]},
-            {acl: @options[:acl]},
-            {success_action_status: "201"}
-          ] + (@options[:conditions] || [])
+          conditions: conditions
         }
       end
 
