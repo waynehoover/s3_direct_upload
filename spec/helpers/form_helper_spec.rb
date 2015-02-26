@@ -23,9 +23,9 @@ describe S3DirectUpload::UploadHelper::S3Uploader do
         s3_uploader.policy_data[:conditions].should include ["starts-with", "$content-type", content_type_starts_with]
       end
 
-      it "is defaults to an empty string" do
+      it "is defaults to no constraint at all" do
         s3_uploader = S3DirectUpload::UploadHelper::S3Uploader.new({})
-        s3_uploader.policy_data[:conditions].should include ["starts-with", "$content-type", ""]
+        s3_uploader.policy_data[:conditions].should_not include ["starts-with", "$content-type", ""]
       end
     end
   end
