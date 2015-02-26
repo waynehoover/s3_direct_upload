@@ -109,9 +109,10 @@ $.fn.S3Uploader = (options) ->
         fileType = ""
         if "type" of @files[0]
           fileType = @files[0].type
-        data.push
-          name: "content-type"
-          value: fileType
+        if fileType != ""
+          data.push
+            name: "content-type"
+            value: fileType
 
         key = $uploadForm.data("key")
           .replace('{timestamp}', new Date().getTime())
