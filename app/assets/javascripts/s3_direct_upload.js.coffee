@@ -106,8 +106,8 @@ $.fn.S3Uploader = (options) ->
 
       formData: (form) ->
         data = form.serializeArray()
-        fileType = ""
-        if "type" of @files[0]
+        fileType = "binary/octet-stream"
+        if ("type" of @files[0]) && (@files[0].type != "")
           fileType = @files[0].type
         data.push
           name: "content-type"
