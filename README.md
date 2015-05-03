@@ -206,7 +206,7 @@ $('#myS3Uploader').bind 's3_uploads_start', (e) ->
   alert("Uploads have started")
 ```
 
-#### Successfull upload
+#### Successful upload
 When a file has been successfully uploaded to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 
 * `url`       The full URL to the uploaded file on S3.
@@ -219,6 +219,15 @@ This hook could be used for example to fill a form hidden field with the returne
 ```coffeescript
 $('#myS3Uploader').bind "s3_upload_complete", (e, content) ->
   $('#someHiddenField').val(content.url)
+```
+
+#### Upload Progress
+When uploading to S3, we receive periodic progress events that expose the percentage of the file(s) uploaded to s3. This is how we update the progress bar. This could be useful for displaying more fine-grained information about the upload, like an ETA or rate.
+
+```coffeescript
+$('#myS3Uploader').bind "s3_upload_progress", (e, data) ->
+  remaining_time = (data.total - data.loaded) / data.bitrate
+  $('#someHiddenField').val(remaining_time)
 ```
 
 #### Failed upload
