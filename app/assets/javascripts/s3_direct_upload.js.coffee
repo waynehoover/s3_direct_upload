@@ -142,7 +142,7 @@ $.fn.S3Uploader = (options) ->
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
-    content.filename         = file.name
+    content.filename         = file.names.replace(/[^a-z0-9]/gi, '_').toLowerCase()
     content.filesize         = file.size if 'size' of file
     content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
     content.filetype         = file.type if 'type' of file
