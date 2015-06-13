@@ -114,10 +114,12 @@ $.fn.S3Uploader = (options) ->
           name: "content-type"
           value: fileType
 
+        filename_parts = @files[0].name.split('.')
         key = $uploadForm.data("key")
           .replace('{timestamp}', new Date().getTime())
           .replace('{unique_id}', @files[0].unique_id)
-          .replace('{extension}', @files[0].name.split('.').pop())
+          .replace('{extension}', filename_parts[filename_parts.length - 1])
+          .replace('${filename}', @files[0].name.replace(/[^a-z0-9\.]/gi, '_').toLowerCase())
 
         # substitute upload timestamp and unique_id into key
         key_field = $.grep data, (n) ->
@@ -130,6 +132,7 @@ $.fn.S3Uploader = (options) ->
         # replace 'key' field to submit form
         unless 'FormData' of window
           $uploadForm.find("input[name='key']").val(settings.path + key)
+
         data
 
   build_content_object = ($uploadForm, file, result) ->
@@ -142,7 +145,7 @@ $.fn.S3Uploader = (options) ->
       content.filepath       = $uploadForm.find('input[name=key]').val().replace('/${filename}', '')
       content.url            = domain + content.filepath + '/' + encodeURIComponent(file.name)
 
-    content.filename         = file.names.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+    content.filename         = file.names
     content.filesize         = file.size if 'size' of file
     content.lastModifiedDate = file.lastModifiedDate if 'lastModifiedDate' of file
     content.filetype         = file.type if 'type' of file
