@@ -149,6 +149,7 @@ Use the javascript in `s3_direct_upload` as a guide.
 * `remove_failed_progress_bar:` By default, the progress bar will not be removed when uploads fail. You can set this to `true` if you want to remove the progress bar.
 * `before_add:` Callback function that executes before a file is added to the queue. It is passed file object and expects `true` or `false` to be returned. This could be useful if you would like to validate the filenames of files to be uploaded for example. If true is returned file will be uploaded as normal, false will cancel the upload.
 * `progress_bar_target:` The jQuery selector for the element where you want the progress bars to be appended to. Default is the form element.
+* `dropzone_target:` The jQuery selector for the element where you want to allow users to drop files into, good for having multiple upload forms on a page. Default is the document window.
 * `click_submit_target:` The jQuery selector for the element you wish to add a click handler to do the submitting instead of submiting on file open.
 
 ### Example with all options
@@ -160,6 +161,7 @@ jQuery ->
     remove_completed_progress_bar: false
     before_add: myCallBackFunction # must return true or false if set
     progress_bar_target: $('.js-progress-bars')
+    dropzone_target: $('.upload')
     click_submit_target: $('.submit-target')
 ```
 ### Example with single file upload bar without script template
