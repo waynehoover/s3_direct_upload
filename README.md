@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/waynehoover/s3_direct_upload.png)](https://travis-ci.org/waynehoover/s3_direct_upload)
 
-Easily generate a form that allows you to upload directly to Amazon S3.
+Easily upload files directly to Amazon S3.
 Multi file uploading supported by jquery-fileupload.
 
 Code extracted from Ryan Bates' [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
@@ -53,10 +53,10 @@ Add the following js and css to your asset pipeline:
 ```
 
 ## Usage
-Create a new view that uses the form helper `s3_uploader_form`:
+Use the `s3_uploader` helper to add an s3 upload file field to your view:
 ```ruby
-<%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
-  <%= file_field_tag :file, multiple: true %>
+<%= s3_uploader callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
+  <%= file_field_tag :file, multiple: true, data: { url: s3_uploader_url } %>
 <% end %>
 ```
 
@@ -105,7 +105,7 @@ Optionally, you can also place this template in the same view for the progress b
                      id: "s3-uploader",
                      class: "upload-form",
                      data: {:key => :val} do %>
-  <%= file_field_tag :file, multiple: true %>
+  <%= file_field_tag :file, multiple: true, data: { url: s3_uploader_url } %>
 <% end %>
 ```
 

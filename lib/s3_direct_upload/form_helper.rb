@@ -11,6 +11,10 @@ module S3DirectUpload
 
     alias_method :s3_uploader, :s3_uploader_form
 
+    def s3_uploader_url ssl = true
+      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || "s3"}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
+    end
+
     class S3Uploader
       def initialize(options)
         @key_starts_with = options[:key_starts_with] || "uploads/"
@@ -18,8 +22,6 @@ module S3DirectUpload
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: options[:bucket] || S3DirectUpload.config.bucket,
-          region: S3DirectUpload.config.region || "s3",
-          url: S3DirectUpload.config.url,
           ssl: true,
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
@@ -57,10 +59,6 @@ module S3DirectUpload
 
       def key
         @key ||= "#{@key_starts_with}{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}"
-      end
-
-      def url
-        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{@options[:region]}.amazonaws.com/#{@options[:bucket]}/"
       end
 
       def policy
