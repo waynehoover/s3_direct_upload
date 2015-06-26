@@ -2,11 +2,17 @@ module S3DirectUpload
   module UploadHelper
     def s3_uploader_form(options = {}, &block)
       uploader = S3Uploader.new(options)
-      form_tag(uploader.url, uploader.form_options) do
+      content_tag(:div, uploader.wrapper_options) do
         uploader.fields.map do |name, value|
           hidden_field_tag(name, value)
         end.join.html_safe + capture(&block)
       end
+    end
+
+    alias_method :s3_uploader, :s3_uploader_form
+
+    def s3_uploader_url ssl = true
+      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || "s3"}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
     end
 
     class S3Uploader
@@ -16,8 +22,6 @@ module S3DirectUpload
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: options[:bucket] || S3DirectUpload.config.bucket,
-          region: S3DirectUpload.config.region || "s3",
-          url: S3DirectUpload.config.url,
           ssl: true,
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
@@ -29,13 +33,10 @@ module S3DirectUpload
         )
       end
 
-      def form_options
+      def wrapper_options
         {
           id: @options[:id],
           class: @options[:class],
-          method: "post",
-          authenticity_token: false,
-          multipart: true,
           data: {
             callback_url: @options[:callback_url],
             callback_method: @options[:callback_method],
@@ -58,10 +59,6 @@ module S3DirectUpload
 
       def key
         @key ||= "#{@key_starts_with}{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}"
-      end
-
-      def url
-        @options[:url] || "http#{@options[:ssl] ? 's' : ''}://#{@options[:region]}.amazonaws.com/#{@options[:bucket]}/"
       end
 
       def policy
