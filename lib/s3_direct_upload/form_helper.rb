@@ -2,12 +2,14 @@ module S3DirectUpload
   module UploadHelper
     def s3_uploader_form(options = {}, &block)
       uploader = S3Uploader.new(options)
-      content_tag(:div, uploader.form_options) do
+      content_tag(:div, uploader.wrapper_options) do
         uploader.fields.map do |name, value|
           hidden_field_tag(name, value)
         end.join.html_safe + capture(&block)
       end
     end
+
+    alias_method :s3_uploader, :s3_uploader_form
 
     class S3Uploader
       def initialize(options)
@@ -29,12 +31,10 @@ module S3DirectUpload
         )
       end
 
-      def form_options
+      def wrapper_options
         {
           id: @options[:id],
           class: @options[:class],
-          method: "post",
-          multipart: true,
           data: {
             callback_url: @options[:callback_url],
             callback_method: @options[:callback_method],
