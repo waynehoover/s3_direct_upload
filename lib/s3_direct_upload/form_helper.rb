@@ -69,7 +69,6 @@ module S3DirectUpload
         {
           expiration: @options[:expiration],
           conditions: [
-            ["starts-with", "$utf8", ""],
             ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
