@@ -28,6 +28,15 @@ describe S3DirectUpload::UploadHelper::S3Uploader do
         s3_uploader.policy_data[:conditions].should include ["starts-with", "$content-type", ""]
       end
     end
+
+    describe "#policy_data" do
+      it "includes server side encruption" do
+        s3_uploader = S3DirectUpload::UploadHelper::S3Uploader.new({:server_side_encryption => "AES256"})
+        hash = s3_uploader.policy_data[:conditions].select{|c|c.class == Hash}.
+          select{|h|h.key?("x-amz-server-side-encryption")}[0]
+        hash["x-amz-server-side-encryption"].should eq("AES256")
+      end
+    end
   end
 
 end

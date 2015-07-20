@@ -29,7 +29,8 @@ module S3DirectUpload
           callback_method: "POST",
           callback_param: "file",
           key_starts_with: @key_starts_with,
-          key: key
+          key: key,
+          server_side_encryption: nil
         )
       end
 
@@ -53,8 +54,9 @@ module S3DirectUpload
           :policy => policy,
           :signature => signature,
           :success_action_status => "201",
-          'X-Requested-With' => 'xhr'
-        }
+          'X-Requested-With' => 'xhr',
+          "x-amz-server-side-encryption" => @options[:server_side_encryption]
+        }.delete_if { |k, v| v.nil? }
       end
 
       def key
@@ -76,8 +78,16 @@ module S3DirectUpload
             {bucket: @options[:bucket]},
             {acl: @options[:acl]},
             {success_action_status: "201"}
-          ] + (@options[:conditions] || [])
+          ] + server_side_encryption + (@options[:conditions] || [])
         }
+      end
+
+      def server_side_encryption
+        if @options[:server_side_encryption]
+          [ { "x-amz-server-side-encryption" => @options[:server_side_encryption] } ]
+        else
+          []
+        end
       end
 
       def signature
