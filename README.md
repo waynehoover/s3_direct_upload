@@ -55,7 +55,7 @@ Add the following js and css to your asset pipeline:
 ```
 
 ## Usage
-Use the `s3_uploader` helper to add an s3 upload file field to your view:
+Use the `s3_uploader_form` helper to add an s3 upload file field to your view:
 ```ruby
 <%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
   <%= file_field_tag :file, multiple: true, data: { url: s3_uploader_url } %>
