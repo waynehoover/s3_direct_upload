@@ -16,6 +16,7 @@ module S3DirectUpload
     end
 
     class S3Uploader
+      include UploadHelper
       def initialize(options)
         @key_starts_with = options[:key_starts_with] || "uploads/"
         @options = options.reverse_merge(
