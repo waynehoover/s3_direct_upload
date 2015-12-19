@@ -37,6 +37,7 @@ module S3DirectUpload
         {
           id: @options[:id],
           class: @options[:class],
+          action: s3_uploader_url,
           data: {
             callback_url: @options[:callback_url],
             callback_method: @options[:callback_method],
