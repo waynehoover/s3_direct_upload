@@ -208,7 +208,7 @@ $('#myS3Uploader').bind 's3_uploads_start', (e) ->
   alert("Uploads have started")
 ```
 
-#### Successfull upload
+#### Successful upload
 When a file has been successfully uploaded to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 
 * `url`       The full URL to the uploaded file on S3.
