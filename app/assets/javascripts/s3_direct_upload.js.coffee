@@ -42,8 +42,8 @@ $.fn.S3Uploader = (options) ->
 
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
-          if settings.template && $(settings.template).length > 0
-            data.context = $($.trim(tmpl(settings.template, file)))
+          if settings.template_id && $('#' + settings.template_id).length > 0
+            data.context = $($.trim(tmpl(settings.template_id, file)))
             $(data.context).prependTo(settings.progress_bar_target || $uploadForm)
           else if !settings.allow_multiple_files
             data.context = settings.progress_bar_target
