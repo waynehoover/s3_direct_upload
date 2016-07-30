@@ -3,15 +3,15 @@
   width: 400px;
   padding-top: 10px;
   margin-top: 10px;
+}
+.upload .progress {
+  margin-top: 8px;
+  border: solid 1px #555;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
 
-  .progress {
-    margin-top: 8px;
-    border: solid 1px #555;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    .bar {
-      height: 10px;
-      background: #3EC144;
-    }
-  }
+.upload .progress .bar {
+  height: 10px;
+  background: #3EC144;
 }
