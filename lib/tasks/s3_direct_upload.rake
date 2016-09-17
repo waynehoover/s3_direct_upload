@@ -4,7 +4,7 @@ namespace :s3_direct_upload do
     require 'thread'
     require 'fog'
 
-    s3     = Fog::Storage.new(provider: "AWS", aws_access_key_id: S3DirectUpload.config.access_key_id, aws_secret_access_key: S3DirectUpload.config.secret_access_key)
+    s3     = Fog::Storage.new(region: S3DirectUpload.config.region, provider: "AWS", aws_access_key_id: S3DirectUpload.config.access_key_id, aws_secret_access_key: S3DirectUpload.config.secret_access_key)
     bucket = S3DirectUpload.config.bucket
     prefix = S3DirectUpload.config.prefix_to_clean || "uploads/#{2.days.ago.strftime('%Y%m%d')}"
 
