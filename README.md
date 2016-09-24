@@ -51,7 +51,9 @@ Add the following js and css to your asset pipeline:
 
 **application.css**
 ```css
-//= require s3_direct_upload_progress_bars
+/*
+*= require s3_direct_upload_progress_bars
+*/
 ```
 
 ## Usage
