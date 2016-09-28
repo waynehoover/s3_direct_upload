@@ -108,7 +108,7 @@ $.fn.S3Uploader = (options) ->
         content.error_thrown = data.errorThrown
 
         data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_failed", [content])
+        $uploadForm.trigger("s3_upload_failed", [content, data.jqXHR])
 
       formData: (form) ->
         data = $uploadForm.find("input").serializeArray()
