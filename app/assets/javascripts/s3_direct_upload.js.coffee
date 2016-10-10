@@ -102,13 +102,18 @@ $.fn.S3Uploader = (options) ->
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
         $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
+        $uploadForm.trigger("s3_uploads_done", [content]) unless current_files.length
 
       fail: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
         content.error_thrown = data.errorThrown
+        content.messages = data.messages
 
         data.context.remove() if data.context && settings.remove_failed_progress_bar # remove progress bar
         $uploadForm.trigger("s3_upload_failed", [content])
+
+        current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
+        $uploadForm.trigger("s3_uploads_done", [content]) unless current_files.length
 
       formData: (form) ->
         data = $uploadForm.find("input").serializeArray()
