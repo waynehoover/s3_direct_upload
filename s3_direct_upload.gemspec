@@ -17,6 +17,5 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'rails', '>= 3.1'
   gem.add_dependency 'coffee-rails', '>= 3.1'
-  gem.add_dependency 'sass-rails', '>= 3.1'
   gem.add_dependency 'jquery-fileupload-rails', '~> 0.4.1'
 end
