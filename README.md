@@ -1,10 +1,8 @@
 # S3DirectUpload
 
-[![Join the chat at https://gitter.im/waynehoover/s3_direct_upload](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/waynehoover/s3_direct_upload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://travis-ci.org/waynehoover/s3_direct_upload.png)](https://travis-ci.org/waynehoover/s3_direct_upload)
 
-Easily upload files directly to Amazon S3.
+Easily generate a form that allows you to upload directly to Amazon S3.
 Multi file uploading supported by jquery-fileupload.
 
 Code extracted from Ryan Bates' [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
@@ -55,15 +53,14 @@ Add the following js and css to your asset pipeline:
 ```
 
 ## Usage
-Use the `s3_uploader_form` helper to add an s3 upload file field to your view:
+Create a new view that uses the form helper `s3_uploader_form`:
 ```ruby
 <%= s3_uploader_form callback_url: model_url, callback_param: "model[image_url]", id: "s3-uploader" do %>
-  <%= file_field_tag :file, multiple: true, data: { url: s3_uploader_url } %>
+  <%= file_field_tag :file, multiple: true %>
 <% end %>
 ```
 
-* It is required that the file_field_tag is named 'file'.
-* A unique :id should be added to file_field_tag if there is many 's3_uploader_form' in the page
+Note: Its required that the file_field_tag is named 'file'.
 
 Then in your application.js.coffee, call the S3Uploader jQuery plugin on the element you created above:
 ```coffeescript
@@ -85,8 +82,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `callback_url:` No default. The url that is POST'd to after file is uploaded to S3. If you don't specify this option, no callback to the server will be made after the file has uploaded to S3.
 * `callback_method:` Defaults to `POST`. Use PUT and remove the multiple option from your file field to update a model.
 * `callback_param:` Defaults to `file`. Parameter key for the POST to `callback_url` the value will be the full s3 url of the file. If for example this is set to "model[image_url]" then the data posted would be `model[image_url] : http://bucketname.s3.amazonws.com/filename.ext`
-* `server_side_encryption:` Default to nothing. Specifies whether [Server-Side encryption](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html) should be used to secure uploaded file. See
-* `key:` Defaults to `uploads/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}`. It is the key, or filename used on s3. `{timestamp}`, `{unique_id}`, `{extension}` and `{cleaned_filename}` are special substitution strings that will be populated by javascript with values for the current upload. {cleaned_filename} is the original filename with special characters removed. `${filename}` is a special s3 string that will be populated with the original uploaded file name. Needs to be at least `"${filename}"` or `"${cleaned_filename}"`. It is highly recommended to use both `{unique_id}`, which will prevent collisions when uploading files with the same name (such as from a mobile device, where every photo is named image.jpg), and a server-generated random value such as `#{SecureRandom.hex}`, which adds further collision protection with other uploaders.
+* `key:` Defaults to `uploads/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}`. It is the key, or filename used on s3. `{timestamp}` and `{unique_id}` are special substitution strings that will be populated by javascript with values for the current upload. `${filename}` is a special s3 string that will be populated with the original uploaded file name. Needs to be at least `"${filename}"`. It is highly recommended to use both `{unique_id}`, which will prevent collisions when uploading files with the same name (such as from a mobile device, where every photo is named image.jpg), and a server-generated random value such as `#{SecureRandom.hex}`, which adds further collision protection with other uploaders.
 * `key_starts_with:` Defaults to `uploads/`. Constraint on the key on s3.  if you change the `key` option, make sure this starts with what you put there. If you set this as a blank string the upload path to s3 can be anything - not recommended!
 * `acl:` Defaults to `public-read`. The AWS acl for files uploaded to s3.
 * `max_file_size:` Defaults to `500.megabytes`. Maximum file size allowed.
@@ -97,17 +93,17 @@ Optionally, you can also place this template in the same view for the progress b
 
 ### Example with all options
 ```ruby
-<%= s3_uploader_form callback_url: model_url,
-                     callback_method: "POST",
-                     callback_param: "model[image_url]",
-                     key: "files/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}",
-                     key_starts_with: "files/",
-                     acl: "public-read",
-                     max_file_size: 50.megabytes,
-                     id: "s3-uploader",
-                     class: "upload-form",
+<%= s3_uploader_form callback_url: model_url, 
+                     callback_method: "POST", 
+                     callback_param: "model[image_url]", 
+                     key: "files/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}", 
+                     key_starts_with: "files/", 
+                     acl: "public-read", 
+                     max_file_size: 50.megabytes, 
+                     id: "s3-uploader", 
+                     class: "upload-form", 
                      data: {:key => :val} do %>
-  <%= file_field_tag :file, multiple: true, data: { url: s3_uploader_url } %>
+  <%= file_field_tag :file, multiple: true %>
 <% end %>
 ```
 
@@ -139,6 +135,7 @@ To do this remove `s3_direct_upload` from your application.js and include the ne
 #= require jquery-fileupload/vendor/tmpl
 ```
 Use the javascript in `s3_direct_upload` as a guide.
+
 
 ## Options for S3Upload jQuery Plugin
 
@@ -179,10 +176,13 @@ Target for progress bar
 ```html
 <div class="upload js-progress-bars">
   <div class="progress">
-    <div class="bar"> </div>
+    <div class="bars"> </div>
   </div>
 </div>
 ```
+
+
+
 
 ### Public methods
 You can change the settings on your form later on by accessing the jQuery instance:
@@ -204,7 +204,7 @@ $('#myS3Uploader').bind 's3_uploads_start', (e) ->
   alert("Uploads have started")
 ```
 
-#### Successful upload
+#### Successfull upload
 When a file has been successfully uploaded to S3, the `s3_upload_complete` is triggered on the form. A `content` object is passed along with the following attributes :
 
 * `url`       The full URL to the uploaded file on S3.
@@ -281,6 +281,7 @@ IE file uploads are working but with a couple caveats.
 
 But IE should still upload your files fine.
 
+
 ## Contributing / TODO
 This is just a simple gem that only really provides some javascript and a form helper.
 This gem could go all sorts of ways based on what people want and how people contribute.
@@ -292,9 +293,10 @@ Ideas:
 * Model methods.
 * Model method to delete files from s3
 
+
 ## Credit
 This gem is basically a small wrapper around code that [Ryan Bates](http://github.com/rbates) wrote for [Railscast#383](http://railscasts.com/episodes/383-uploading-to-amazon-s3). Most of the code in this gem was extracted from [gallery-jquery-fileupload](https://github.com/railscasts/383-uploading-to-amazon-s3/tree/master/gallery-jquery-fileupload).
 
 Thank you Ryan Bates!
 
-This code also uses the excellent [jQuery-File-Upload](https://github.com/blueimp/jQuery-File-Upload), which is included in this gem by its rails counterpart [jquery-fileupload-rails](https://github.com/tors/jquery-fileupload-rails)
+This code also uses the excellecnt [jQuery-File-Upload](https://github.com/blueimp/jQuery-File-Upload), which is included in this gem by its rails counterpart [jquery-fileupload-rails](https://github.com/tors/jquery-fileupload-rails)
