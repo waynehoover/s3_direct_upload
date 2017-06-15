@@ -18,6 +18,7 @@ $.fn.S3Uploader = (options) ->
     path: ''
     additional_data: null
     before_add: null
+    before_add_async: null
     remove_completed_progress_bar: true
     remove_failed_progress_bar: false
     progress_bar_target: null
@@ -41,12 +42,10 @@ $.fn.S3Uploader = (options) ->
 
   setUploadForm = ->
     $uploadForm.find("input[type='file']").fileupload
-
       add: (e, data) ->
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
-
-        unless settings.before_add and not settings.before_add(file)
+        addFile = ->
           current_files.push data
           if $('#template-upload').length > 0
             data.context = $($.trim(tmpl("template-upload", file)))
@@ -60,6 +59,12 @@ $.fn.S3Uploader = (options) ->
               forms_for_submit = [data]
           else
             data.submit()
+
+        if settings.before_add_async
+          settings.before_add_async(file).then ->
+            addFile()
+        else if not (settings.before_add and not settings.before_add(file))
+          addFile()
 
       start: (e) ->
         $uploadForm.trigger("s3_uploads_start", [e])
