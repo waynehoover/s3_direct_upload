@@ -23,6 +23,7 @@ $.fn.S3Uploader = (options) ->
     progress_bar_target: null
     click_submit_target: null
     allow_multiple_files: true
+    max_progress_bar_value: 100
 
   $.extend settings, options
 
@@ -60,7 +61,7 @@ $.fn.S3Uploader = (options) ->
 
       progress: (e, data) ->
         if data.context
-          progress = parseInt(data.loaded / data.total * 100, 10)
+          progress = parseInt(data.loaded / data.total * settings.max_progress_bar_value, 10)
           data.context.find('.bar').css('width', progress + '%')
 
       done: (e, data) ->
@@ -92,10 +93,10 @@ $.fn.S3Uploader = (options) ->
               return event.result
 
         data.context.remove() if data.context && settings.remove_completed_progress_bar # remove progress bar
-        $uploadForm.trigger("s3_upload_complete", [content])
+        $uploadForm.trigger("s3_upload_complete", [content, data])
 
         current_files.splice($.inArray(data, current_files), 1) # remove that element from the array
-        $uploadForm.trigger("s3_uploads_complete", [content]) unless current_files.length
+        $uploadForm.trigger("s3_uploads_complete", [content, data]) unless current_files.length
 
       fail: (e, data) ->
         content = build_content_object $uploadForm, data.files[0], data.result
