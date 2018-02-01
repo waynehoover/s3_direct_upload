@@ -94,6 +94,7 @@ Optionally, you can also place this template in the same view for the progress b
 * `class:` Optional html class for the form.
 * `data:` Optional html data attribute hash.
 * `bucket:` Optional (defaults to bucket used in config).
+* `conditions:` Optional array of additional s3 POST policy values (can be used to permit tagging)
 
 ### Example with all options
 ```ruby
