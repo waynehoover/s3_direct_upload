@@ -12,12 +12,13 @@ module S3DirectUpload
     alias_method :s3_uploader, :s3_uploader_form
 
     def s3_uploader_url ssl = true
-      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || "s3"}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
+      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || 's3'}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
     end
 
     class S3Uploader
       def initialize(options)
-        @key_starts_with = options[:key_starts_with] || "uploads/"
+        @key_starts_with = options[:key_starts_with] || 'uploads/'
+        @date = Time.now.utc.strftime('%Y%m%dT%H%M%SZ')
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
@@ -30,7 +31,8 @@ module S3DirectUpload
           callback_param: "file",
           key_starts_with: @key_starts_with,
           key: key,
-          server_side_encryption: nil
+          server_side_encryption: nil,
+          conditions: []
         )
       end
 
@@ -49,14 +51,22 @@ module S3DirectUpload
       def fields
         {
           :key => @options[:key] || key,
-          :acl => @options[:acl],
-          "AWSAccessKeyId" => @options[:aws_access_key_id],
           :policy => policy,
-          :signature => signature,
-          :success_action_status => "201",
+          'x-amz-signature' => signature
+        }.merge(common_fields)
+      end
+
+      # fields that must be included both as form data and as conditions in policy
+      def common_fields
+        {
+          acl: @options[:acl],
+          success_action_status: '201',
           'X-Requested-With' => 'xhr',
-          "x-amz-server-side-encryption" => @options[:server_side_encryption]
-        }.delete_if { |k, v| v.nil? }
+          'x-amz-server-side-encryption' => @options[:server_side_encryption],
+          'x-amz-algorithm' => 'AWS4-HMAC-SHA256',
+          'x-amz-credential' => credential,
+          'x-amz-date' => @date
+        }.compact
       end
 
       def key
@@ -64,7 +74,7 @@ module S3DirectUpload
       end
 
       def policy
-        Base64.encode64(policy_data.to_json).gsub("\n", "")
+        Base64.encode64(policy_data.to_json).gsub("\n", '')
       end
 
       def policy_data
@@ -74,29 +84,36 @@ module S3DirectUpload
             ["starts-with", "$key", @options[:key_starts_with]],
             ["starts-with", "$x-requested-with", ""],
             ["content-length-range", 0, @options[:max_file_size]],
-            ["starts-with","$content-type", @options[:content_type_starts_with] ||""],
-            {bucket: @options[:bucket]},
-            {acl: @options[:acl]},
-            {success_action_status: "201"}
-          ] + server_side_encryption + (@options[:conditions] || [])
+            ["starts-with","$content-type", @options[:content_type_starts_with] || ''],
+            {bucket: @options[:bucket]}
+          ] + @options[:conditions] + common_fields.to_a.map { |k, v| { k => v } }
         }
       end
 
-      def server_side_encryption
-        if @options[:server_side_encryption]
-          [ { "x-amz-server-side-encryption" => @options[:server_side_encryption] } ]
-        else
-          []
-        end
+      def credential
+        [
+          @options[:aws_access_key_id],
+          @date[0, 8],
+          S3DirectUpload.config.region || 's3',
+          's3',
+          'aws4_request'
+        ].join('/')
       end
 
       def signature
-        Base64.encode64(
-          OpenSSL::HMAC.digest(
-            OpenSSL::Digest.new('sha256'),
-            @options[:aws_secret_access_key], policy
-          )
-        ).gsub("\n", "")
+        k_date = hmac('AWS4' + @options[:aws_secret_access_key], Time.now.utc.strftime('%Y%m%d'))
+        k_region = hmac(k_date, S3DirectUpload.config.region || 's3')
+        k_service = hmac(k_region, 's3')
+        k_creds = hmac(k_service, 'aws4_request')
+        OpenSSL::HMAC.hexdigest(
+          OpenSSL::Digest.new('sha256'),
+          k_creds,
+          policy
+        )
+      end
+
+      def hmac(key, value)
+        OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha256'), key, value)
       end
     end
   end
