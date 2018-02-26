@@ -93,7 +93,7 @@ module S3DirectUpload
       def signature
         Base64.encode64(
           OpenSSL::HMAC.digest(
-            OpenSSL::Digest.new('sha1'),
+            OpenSSL::Digest.new('sha256'),
             @options[:aws_secret_access_key], policy
           )
         ).gsub("\n", "")
