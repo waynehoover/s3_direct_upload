@@ -94,7 +94,7 @@ module S3DirectUpload
         [
           @options[:aws_access_key_id],
           @date[0, 8],
-          S3DirectUpload.config.region || 's3',
+          S3DirectUpload.config.region || 'us-east-1',
           's3',
           'aws4_request'
         ].join('/')
@@ -102,7 +102,7 @@ module S3DirectUpload
 
       def signature
         k_date = hmac('AWS4' + @options[:aws_secret_access_key], Time.now.utc.strftime('%Y%m%d'))
-        k_region = hmac(k_date, S3DirectUpload.config.region || 's3')
+        k_region = hmac(k_date, S3DirectUpload.config.region || 'us-east-1')
         k_service = hmac(k_region, 's3')
         k_creds = hmac(k_service, 'aws4_request')
         OpenSSL::HMAC.hexdigest(
