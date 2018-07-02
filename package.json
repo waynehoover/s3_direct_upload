@@ -1,0 +1,26 @@
+{
+  "name": "s3_direct_upload",
+  "version": "1.0.0",
+  "description": "Direct Upload to Amazon S3 With CORS",
+  "main": "app/assets/javascripts/s3_direct_upload.js.coffee",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contently/s3_direct_upload.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/contently/s3_direct_upload/issues"
+  },
+  "homepage": "https://github.com/contently/s3_direct_upload#readme",
+  "dependencies": {
+    "blueimp-file-upload": "git+https://github.com/blueimp/jQuery-File-Upload.git",
+    "blueimp-tmpl": "^3.11.0"
+  }
+}
