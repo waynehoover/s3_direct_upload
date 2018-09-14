@@ -12,12 +12,12 @@ module S3DirectUpload
     alias_method :s3_uploader, :s3_uploader_form
 
     def s3_uploader_url ssl = true
-      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || 's3'}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
+      S3DirectUpload.config.url || "http#{ssl ? 's' : ''}://#{S3DirectUpload.config.region || "s3"}.amazonaws.com/#{S3DirectUpload.config.bucket}/"
     end
 
     class S3Uploader
       def initialize(options)
-        @key_starts_with = options[:key_starts_with] || 'uploads/'
+        @key_starts_with = options[:key_starts_with] || "uploads/"
         @date = Time.now.utc.strftime('%Y%m%dT%H%M%SZ')
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
@@ -74,7 +74,7 @@ module S3DirectUpload
       end
 
       def policy
-        Base64.encode64(policy_data.to_json).gsub("\n", '')
+        Base64.encode64(policy_data.to_json).gsub("\n", "")
       end
 
       def policy_data
